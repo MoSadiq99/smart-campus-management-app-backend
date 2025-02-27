@@ -3,12 +3,17 @@ package edu.kingston.smartcampus.model;
 import jakarta.annotation.Generated;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import edu.kingston.smartcampus.model.enums.EventTypes;
 
+
+@Getter
+@Setter
 @Entity
 @Table(name = "events")
 public class Event {
@@ -51,4 +56,6 @@ public class Event {
 
     @OneToMany(mappedBy = "event", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Resource> resources = new HashSet<>();
+
+
 }
