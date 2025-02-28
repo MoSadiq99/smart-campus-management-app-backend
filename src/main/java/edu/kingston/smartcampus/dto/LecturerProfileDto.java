@@ -7,7 +7,4 @@ import lombok.Data;
 public class LecturerProfileDto {
     @NotNull(message = "Department is required")
     private String department;
-
-    @NotNull(message = "Office location is required")
-    private String officeLocation;
 }
