@@ -19,10 +19,13 @@ import org.springframework.web.filter.CorsFilter;
 import java.util.Arrays;
 
 @Configuration
-@RequiredArgsConstructor
 public class BeansConfig {
 
     private final MyUserDetailsService userDetailsService;
+
+    public BeansConfig(MyUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {

@@ -32,7 +32,7 @@ public abstract class User implements UserDetails, Principal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
     @NotNull(message = "First name is required")
     private String firstName;
@@ -130,7 +130,7 @@ public abstract class User implements UserDetails, Principal {
 
     @Override
     public String getUsername() {
-        return getEmail();
+        return this.email;
     }
 
     //! Principal methods
@@ -138,4 +138,12 @@ public abstract class User implements UserDetails, Principal {
     public String getName() {
         return firstName + " " + lastName;
     }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+
+
 }

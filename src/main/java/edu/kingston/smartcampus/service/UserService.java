@@ -1,7 +1,7 @@
 package edu.kingston.smartcampus.service;
 
 import edu.kingston.smartcampus.dto.*;
-import edu.kingston.smartcampus.model.*;
+import edu.kingston.smartcampus.model.Course;
 import edu.kingston.smartcampus.model.enums.RoleName;
 import edu.kingston.smartcampus.model.enums.UserStatus;
 import edu.kingston.smartcampus.model.user.*;
@@ -137,7 +137,7 @@ public class UserService implements org.springframework.security.core.userdetail
     }
 
     private void copyCommonFields(User source, User target) {
-        target.setUserId(source.getUserId());
+        target.setId(source.getId());
         target.setFirstName(source.getFirstName());
         target.setLastName(source.getLastName());
         target.setEmail(source.getEmail());
@@ -150,7 +150,7 @@ public class UserService implements org.springframework.security.core.userdetail
     }
 
     private void mapToUserDto(User user, UserDto dto) {
-        dto.setUserId(user.getUserId());
+        dto.setUserId(user.getId());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setEmail(user.getEmail());

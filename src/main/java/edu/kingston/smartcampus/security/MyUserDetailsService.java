@@ -1,6 +1,6 @@
 package edu.kingston.smartcampus.security;
 
-import edu.kingston.agriconnect.repository.UserRepository;
+import edu.kingston.smartcampus.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,10 +9,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class MyUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
+
+    public MyUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     @Transactional
