@@ -1,4 +1,4 @@
-package edu.kingston.smartcampus.model;
+package edu.kingston.smartcampus.model.user;
 
 import edu.kingston.smartcampus.model.enums.RoleName;
 import jakarta.persistence.*;
@@ -17,9 +17,13 @@ public class Role implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long roleId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role_name", nullable = false)
     private RoleName roleName;
+
+    public Role(RoleName roleName) {
+        this.roleName = roleName;
+    }
 }

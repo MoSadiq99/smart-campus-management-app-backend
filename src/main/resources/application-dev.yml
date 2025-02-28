@@ -1,6 +1,11 @@
 spring:
   application:
     name: smartcampus
+    security:
+      jwt:
+        # Can be generated online
+        secret-key: 5fadbfed784644f631bb0bdb7a36c9e30435e21cd51ca77c35b00adafd296970
+        expiration: 8640000
 
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
