@@ -1,6 +1,7 @@
 package edu.kingston.smartcampus.dto;
 
 import java.time.LocalDateTime;
+import edu.kingston.smartcampus.model.enums.EventStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -26,5 +27,5 @@ public class EventCreateDto {
     private Integer capacity;
 
     @NotNull(message = "Status is required")
-    private String status;
+    private EventStatus status;
 }

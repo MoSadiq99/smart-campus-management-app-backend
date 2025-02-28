@@ -1,5 +1,6 @@
 package edu.kingston.smartcampus.model;
 
+import edu.kingston.smartcampus.model.enums.EventStatus;
 import edu.kingston.smartcampus.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -12,7 +13,8 @@ import java.util.List;
 @Data
 public class Event {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -25,13 +27,9 @@ public class Event {
     private LocalDateTime endTime;
     private String location;
     private Integer capacity;
-    private String status;
+    private EventStatus status;
 
     @ManyToMany
-    @JoinTable(
-            name = "event_attendees",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @JoinTable(name = "event_attendees", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> attendees;
 }

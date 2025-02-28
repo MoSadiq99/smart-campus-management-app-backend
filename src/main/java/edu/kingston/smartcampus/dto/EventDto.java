@@ -2,6 +2,7 @@ package edu.kingston.smartcampus.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import edu.kingston.smartcampus.model.enums.EventStatus;
 import lombok.Data;
 
 @Data
@@ -14,6 +15,6 @@ public class EventDto {
     private LocalDateTime endTime;
     private String location;
     private Integer capacity;
-    private String status;
+    private EventStatus status;
     private List<Long> attendeeIds;
 }
