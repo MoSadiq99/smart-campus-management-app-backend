@@ -1,5 +1,9 @@
 package edu.kingston.smartcampus.controller;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,5 +29,12 @@ public class EventController {
     public ResponseEntity<EventDto> getEventById(@PathVariable Long id) {
         EventDto eventDto = eventService.getEventById(id);
         return ResponseEntity.ok(eventDto);
+    }
+
+    @GetMapping("/api/events")
+    public ResponseEntity<List<EventDto>> getEventByTime(@RequestParam @DateTimeFormat LocalDateTime from,
+            @RequestParam @DateTimeFormat LocalDateTime to) {
+        List<EventDto> eventDtos = eventService.getEventByTime(from, to);
+        return ResponseEntity.ok(eventDtos);
     }
 }

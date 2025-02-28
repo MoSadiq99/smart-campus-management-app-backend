@@ -1,5 +1,9 @@
 package edu.kingston.smartcampus.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import edu.kingston.smartcampus.dto.EventCreateDto;
 import edu.kingston.smartcampus.dto.EventDto;
@@ -39,6 +43,17 @@ public class EventService {
         EventDto eventDto = new EventDto();
         mapToEventDto(event, eventDto);
         return eventDto;
+    }
+
+    public List<EventDto> getEventByTime(LocalDateTime startTime, LocalDateTime endTime) {
+        List<Event> events = eventRepository.findByStartTimeBetween(startTime, endTime);
+        return events.stream()
+                .map(event -> {
+                    EventDto eventDto = new EventDto();
+                    mapToEventDto(event, eventDto);
+                    return eventDto;
+                })
+                .collect(Collectors.toList());
     }
 
     private void mapToEventDto(Event event, EventDto eventDto) {
