@@ -27,6 +27,8 @@ public class Event {
     private LocalDateTime endTime;
     private String location;
     private Integer capacity;
+
+    @Enumerated(EnumType.STRING)
     private EventStatus status;
 
     @ManyToMany

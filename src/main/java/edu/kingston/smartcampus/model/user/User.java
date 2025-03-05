@@ -143,7 +143,4 @@ public abstract class User implements UserDetails, Principal {
     public String getPassword() {
         return password;
     }
-
-
-
 }
