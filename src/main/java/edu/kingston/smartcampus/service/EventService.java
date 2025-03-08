@@ -56,6 +56,26 @@ public class EventService {
                 .collect(Collectors.toList());
     }
 
+    public EventDto updateEvent(Long id, EventCreateDto dto) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+
+        event.setTitle(dto.getTitle());
+        event.setOrganizer(userRepository.getReferenceById(dto.getOrganizerId()));
+        event.setDescription(dto.getDescription());
+        event.setStartTime(dto.getStartTime());
+        event.setEndTime(dto.getEndTime());
+        event.setLocation(dto.getLocation());
+        event.setCapacity(dto.getCapacity());
+        event.setStatus(dto.getStatus());
+
+        Event savedEvent = eventRepository.save(event);
+
+        EventDto eventDto = new EventDto();
+        mapToEventDto(savedEvent, eventDto);
+        return eventDto;
+    }
+
     private void mapToEventDto(Event event, EventDto eventDto) {
         eventDto.setEventId(event.getId());
         eventDto.setTitle(event.getTitle());
