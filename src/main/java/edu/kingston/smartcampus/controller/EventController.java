@@ -37,4 +37,10 @@ public class EventController {
         List<EventDto> eventDtos = eventService.getEventByTime(from, to);
         return ResponseEntity.ok(eventDtos);
     }
+
+    @PutMapping("/api/events/{id}")
+    public ResponseEntity<EventDto> updateEvent(@PathVariable Long id, @Valid @RequestBody EventCreateDto dto) {
+        EventDto eventDto = eventService.updateEvent(id, dto);
+        return ResponseEntity.ok(eventDto);
+    }
 }
