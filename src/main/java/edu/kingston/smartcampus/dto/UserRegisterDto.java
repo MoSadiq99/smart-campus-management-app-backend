@@ -1,8 +1,6 @@
 package edu.kingston.smartcampus.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 // self register dto
@@ -28,4 +26,8 @@ public class UserRegisterDto {
     private String address;
 
     private String profileImage;
+
+    @NotEmpty(message = "User type is required")
+    @NotBlank(message = "User type is required")
+    private String userType;
 }

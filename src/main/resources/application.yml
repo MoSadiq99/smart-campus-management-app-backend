@@ -5,7 +5,13 @@ spring:
     multipart:
       max-file-size: 50MB
 
-Springdoc:
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web.socket: DEBUG
+    org.springframework.messaging: TRACE
+
+springdoc:
   default-produces-media-type: application/json
   api-docs:
     enabled: true
@@ -13,3 +19,5 @@ Springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui
+
+

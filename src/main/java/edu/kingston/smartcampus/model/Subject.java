@@ -1,5 +1,6 @@
 package edu.kingston.smartcampus.model;
 
+import edu.kingston.smartcampus.model.enums.SubjectType;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,6 +17,9 @@ public class Subject {
     private String subjectName; // e.g., "Variables", "Loops"
 
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    private SubjectType subjectType; 
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)

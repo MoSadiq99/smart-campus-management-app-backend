@@ -18,8 +18,12 @@ public class Notification {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false)
     private String message;
     private String type; // e.g., "Email", "SMS"
     private LocalDateTime sentTime;
     private String status;
+
+    @Column(name = "`read`", nullable = false, columnDefinition = "TINYINT(1) NOT NULL DEFAULT 0")
+    private boolean read = false;
 }

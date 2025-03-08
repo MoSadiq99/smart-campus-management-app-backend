@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -60,4 +62,19 @@ public class UserController {
         AdminDto adminDto = userService.setAdminProfile(id, dto);
         return ResponseEntity.ok(adminDto);
     }
+
+    //* Notification *//
+
+    @PostMapping("/api/notifications")
+    public ResponseEntity<NotificationDto> sendNotification(@Valid @RequestBody NotificationCreateDto dto) {
+        NotificationDto notificationDto = userService.sendNotification(dto);
+        return ResponseEntity.ok(notificationDto);
+    }
+
+    @GetMapping("/api/users/{id}/notifications")
+    public ResponseEntity<List<NotificationDto>> getUserNotifications(@PathVariable Long id) {
+        List<NotificationDto> notifications = userService.getUserNotifications(id);
+        return ResponseEntity.ok(notifications);
+    }
+
 }

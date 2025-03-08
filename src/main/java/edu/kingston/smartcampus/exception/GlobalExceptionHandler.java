@@ -15,7 +15,7 @@ import java.util.Set;
 import static edu.kingston.smartcampus.exception.BusinessErrorCodes.ACCOUNT_DISABLED;
 import static edu.kingston.smartcampus.exception.BusinessErrorCodes.ACCOUNT_LOCKED;
 
-@RestControllerAdvice
+//@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     // A custom exception handler - LockedException

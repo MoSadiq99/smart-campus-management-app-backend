@@ -22,7 +22,16 @@ public class Reservation {
     @JoinColumn(name = "resource_id", nullable = false)
     private Resource resource;
 
+    @ManyToOne
+    @JoinColumn(name = "lecture_id", nullable = true) // Optional
+    private Lecture lecture; // Associated lecture (if applicable)
+
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = true) // Optional
+    private Event event; // Associated event (if applicable)
+
+    private String title;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private String status;
+    private String status; // e.g., PENDING, CONFIRMED, CANCELLED
 }

@@ -1,5 +1,6 @@
 package edu.kingston.smartcampus.model;
 
+import edu.kingston.smartcampus.model.enums.ResourceStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,9 +17,18 @@ public class Resource {
     private String resourceName;
     private String type;
     private Integer capacity;
-    private String availabilityStatus;
+
+    @Enumerated(EnumType.STRING)
+    private ResourceStatus availabilityStatus;
+
     private String location;
+
+    @ManyToMany
+    private List<Schedule> schedules;
 
     @OneToMany(mappedBy = "resource", cascade = CascadeType.ALL)
     private List<Reservation> reservations;
+
+    @ManyToMany(mappedBy = "resources")
+    private List<Lecture> lectures;
 }

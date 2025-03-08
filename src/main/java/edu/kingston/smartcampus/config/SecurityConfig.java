@@ -1,7 +1,6 @@
 package edu.kingston.smartcampus.config;
 
 import edu.kingston.smartcampus.security.JwtFilter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -36,6 +35,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/ws",
                                 "/api/**", //! for testing
                                 "/api/auth/**",
                                 "/v2/api-docs",
@@ -58,40 +58,4 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
-
 }
-
-
-//@Configuration
-//@EnableWebSecurity
-//@EnableMethodSecurity
-//public class SecurityConfig {
-//
-//    private final UserDetailsService userDetailsService;
-//
-//    public SecurityConfig(UserDetailsService userDetailsService) {
-//        this.userDetailsService = userDetailsService;
-//    }
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf().disable()
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/api/register").permitAll() // Open registration
-//                        .requestMatchers("/api/users/**/admin-profile").hasRole("ADMIN") // Admin-only
-//                        .anyRequest().authenticated()
-//                )
-//                .formLogin().permitAll()
-//                .and()
-//                .logout().permitAll();
-//
-//        return http.build();
-//    }
-//
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-//}

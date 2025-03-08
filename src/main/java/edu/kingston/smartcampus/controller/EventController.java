@@ -32,9 +32,12 @@ public class EventController {
     }
 
     @GetMapping("/api/events")
-    public ResponseEntity<List<EventDto>> getEventByTime(@RequestParam @DateTimeFormat LocalDateTime from,
-            @RequestParam @DateTimeFormat LocalDateTime to) {
+    public ResponseEntity<List<EventDto>> getEventByTime(
+            @RequestParam @DateTimeFormat LocalDateTime from,
+            @RequestParam @DateTimeFormat LocalDateTime to
+    ) {
         List<EventDto> eventDtos = eventService.getEventByTime(from, to);
+        System.out.println("Events being returned: " + eventDtos); // Or use a proper logger
         return ResponseEntity.ok(eventDtos);
     }
 

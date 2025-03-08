@@ -1,7 +1,11 @@
 package edu.kingston.smartcampus.dto;
 
+import edu.kingston.smartcampus.model.enums.ResourceStatus;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.Value;
 
 @Data
 public class ResourceCreateDto {
@@ -13,8 +17,9 @@ public class ResourceCreateDto {
 
     private Integer capacity;
 
-    @NotNull(message = "Status is required")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private ResourceStatus availabilityStatus;
 
     private String location;
+
 }

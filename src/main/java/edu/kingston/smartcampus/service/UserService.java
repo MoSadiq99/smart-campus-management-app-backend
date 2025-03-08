@@ -2,34 +2,105 @@ package edu.kingston.smartcampus.service;
 
 import edu.kingston.smartcampus.dto.*;
 import edu.kingston.smartcampus.model.Course;
+import edu.kingston.smartcampus.model.Notification;
 import edu.kingston.smartcampus.model.enums.RoleName;
 import edu.kingston.smartcampus.model.enums.UserStatus;
 import edu.kingston.smartcampus.model.user.*;
+import edu.kingston.smartcampus.repository.NotificationRepository;
 import edu.kingston.smartcampus.repository.RoleRepository;
 import edu.kingston.smartcampus.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements org.springframework.security.core.userdetails.UserDetailsService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationRepository notificationRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
+    public NotificationDto sendNotification(NotificationCreateDto dto) {
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        Notification notification = new Notification();
+        notification.setUser(user);
+        notification.setMessage(dto.getMessage());
+        notification.setType(dto.getType());
+        notification.setSentTime(dto.getSentTime() != null ? dto.getSentTime() : LocalDateTime.now());
+        notification.setStatus("SENT");
+        notification.setRead(false);
+
+        Notification savedNotification = notificationRepository.save(notification);
+
+        // Send via WebSocket to the user's specific topic
+        NotificationDto notificationDto = mapToNotificationDto(savedNotification);
+        messagingTemplate.convertAndSend("/topic/notifications/" + dto.getUserId(), notificationDto);
+
+        return notificationDto;
     }
 
-    public UserDto registerUser(UserRegisterDto dto) {
-        PendingUser user = new PendingUser();
+    public List<NotificationDto> getUserNotifications(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        List<Notification> notifications = notificationRepository.findByUserId(userId);
+        return notifications.stream()
+                .map(this::mapToNotificationDto)
+                .collect(Collectors.toList());
+    }
+
+    private NotificationDto mapToNotificationDto(Notification notification) {
+        NotificationDto dto = new NotificationDto();
+        dto.setNotificationId(notification.getNotificationId());
+        dto.setUserId(notification.getUser().getId());
+        dto.setMessage(notification.getMessage());
+        dto.setType(notification.getType());
+        dto.setSentTime(notification.getSentTime());
+        dto.setStatus(notification.getStatus());
+        dto.setRead(notification.isRead());
+        return dto;
+    }
+
+
+    public UserDto registerUser(@Valid UserRegisterDto dto) {
+        User user;
+        switch (dto.getUserType().toUpperCase()) {
+            case "STUDENT":
+                user = new Student();
+                Role studentRole = roleRepository.findByRoleName(RoleName.ROLE_STUDENT)
+                        .orElseThrow(() -> new IllegalStateException("Student role not found"));
+                user.setRole(studentRole);
+                break;
+            case "LECTURER":
+                user = new Lecturer();
+                Role lecturerRole = roleRepository.findByRoleName(RoleName.ROLE_LECTURER)
+                        .orElseThrow(() -> new IllegalStateException("Lecturer role not found"));
+                user.setRole(lecturerRole);
+                break;
+            case "ADMIN":
+                user = new Admin();
+                Role adminRole = roleRepository.findByRoleName(RoleName.ROLE_ADMIN)
+                        .orElseThrow(() -> new IllegalStateException("Admin role not found"));
+                user.setRole(adminRole);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid user type: " + dto.getUserType());
+        }
+
+        // Set common fields
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
@@ -41,82 +112,81 @@ public class UserService implements org.springframework.security.core.userdetail
         user.setRegistrationDate(LocalDateTime.now());
         user.setAccountLocked(false);
 
-        Role defaultRole = roleRepository.findByRoleName(RoleName.ROLE_USER)
-                .orElseThrow(() -> new IllegalStateException("Default role not found"));
-        user.setRole(defaultRole);
-
+        // Save and return DTO
         User savedUser = userRepository.save(user);
-
         UserDto userDto = new UserDto();
         mapToUserDto(savedUser, userDto);
         return userDto;
     }
 
+    @Transactional
     public LecturerDto setLecturerProfile(Long id, LecturerProfileDto dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        if (!(user instanceof PendingUser)) {
-            throw new IllegalStateException("User type already set");
+        // Check if user is a Lecturer and pending
+        if (!(user instanceof Lecturer)) {
+            throw new IllegalStateException("User is not a Lecturer");
+        }
+        if (user.getStatus() != UserStatus.PENDING) {
+            throw new IllegalStateException("User status is already set to " + user.getStatus());
         }
 
-        Lecturer lecturer = new Lecturer();
-        copyCommonFields(user, lecturer);
+        // Update existing Lecturer
+        Lecturer lecturer = (Lecturer) user;
         lecturer.setDepartment(dto.getDepartment());
         lecturer.setStatus(UserStatus.ACTIVE);
-        lecturer.setRole(roleRepository.findByRoleName(RoleName.ROLE_LECTURER)
-                .orElseThrow(() -> new IllegalStateException("Lecturer role not found")));
 
         User savedLecturer = userRepository.save(lecturer);
-        userRepository.delete(user);
-
         LecturerDto lecturerDto = new LecturerDto();
         mapToLecturerDto((Lecturer) savedLecturer, lecturerDto);
         return lecturerDto;
     }
 
+    @Transactional
     public StudentDto setStudentProfile(Long id, StudentProfileDto dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        if (!(user instanceof PendingUser)) {
-            throw new IllegalStateException("User type already set");
+        // Check if user is a Student and pending
+        if (!(user instanceof Student)) {
+            throw new IllegalStateException("User is not a Student");
+        }
+        if (user.getStatus() != UserStatus.PENDING) {
+            throw new IllegalStateException("User status is already set to " + user.getStatus());
         }
 
-        Student student = new Student();
-        copyCommonFields(user, student);
+        // Update existing Student
+        Student student = (Student) user;
         student.setStudentIdNumber(dto.getStudentIdNumber());
         student.setMajor(dto.getMajor());
         student.setStatus(UserStatus.ACTIVE);
-        student.setRole(roleRepository.findByRoleName(RoleName.ROLE_STUDENT)
-                .orElseThrow(() -> new IllegalStateException("Student role not found")));
 
         User savedStudent = userRepository.save(student);
-        userRepository.delete(user);
-
         StudentDto studentDto = new StudentDto();
         mapToStudentDto((Student) savedStudent, studentDto);
         return studentDto;
     }
 
+    @Transactional
     public AdminDto setAdminProfile(Long id, AdminProfileDto dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        if (!(user instanceof PendingUser)) {
-            throw new IllegalStateException("User type already set");
+        // Check if user is an Admin and pending
+        if (!(user instanceof Admin)) {
+            throw new IllegalStateException("User is not an Admin");
+        }
+        if (user.getStatus() != UserStatus.PENDING) {
+            throw new IllegalStateException("User status is already set to " + user.getStatus());
         }
 
-        Admin admin = new Admin();
-        copyCommonFields(user, admin);
+        // Update existing Admin
+        Admin admin = (Admin) user;
         admin.setAdminTitle(dto.getAdminTitle());
         admin.setStatus(UserStatus.ACTIVE);
-        admin.setRole(roleRepository.findByRoleName(RoleName.ROLE_ADMIN)
-                .orElseThrow(() -> new IllegalStateException("Admin role not found")));
 
         User savedAdmin = userRepository.save(admin);
-        userRepository.delete(user);
-
         AdminDto adminDto = new AdminDto();
         mapToAdminDto((Admin) savedAdmin, adminDto);
         return adminDto;

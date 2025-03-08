@@ -34,6 +34,9 @@ public class JwtFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
 
     ) throws ServletException, IOException {
+        if (request.getServletPath().contains("/ws")) {
+            filterChain.doFilter(request, response);
+        }
 
         if (request.getServletPath().contains("/api/**")) { //! for testing
             filterChain.doFilter(request, response);
