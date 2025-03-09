@@ -19,7 +19,7 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long courseId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String courseCode; // e.g., "CS101"
 
     @Column(nullable = false)
@@ -37,8 +37,9 @@ public class Course {
     @ManyToMany(mappedBy = "enrolledCourses")
     private List<Student> enrolledStudents = new ArrayList<>(); // Students enrolled in this course
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private List<Subject> subjects = new ArrayList<>(); // Subjects/topics covered in this course
+    @ManyToMany
+    @JoinTable(name = "course_subjects", joinColumns = @JoinColumn(name = "course_id"), inverseJoinColumns = @JoinColumn(name = "subject_id"))
+    private List<Subject> subjects = new ArrayList<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<Schedule> schedules = new ArrayList<>(); // Schedules related to this course

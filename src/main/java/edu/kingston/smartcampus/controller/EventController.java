@@ -15,33 +15,33 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class EventController {
 
     private final EventService eventService;
 
-    @PostMapping("/api/events")
+    @PostMapping("/events")
     public ResponseEntity<EventDto> createEvent(@Valid @RequestBody EventCreateDto dto) {
         EventDto eventDto = eventService.createEvent(dto);
         return ResponseEntity.ok(eventDto);
     }
 
-    @GetMapping("/api/events/{id}")
+    @GetMapping("/events/{id}")
     public ResponseEntity<EventDto> getEventById(@PathVariable Long id) {
         EventDto eventDto = eventService.getEventById(id);
         return ResponseEntity.ok(eventDto);
     }
 
-    @GetMapping("/api/events")
+    @GetMapping("/events")
     public ResponseEntity<List<EventDto>> getEventByTime(
             @RequestParam @DateTimeFormat LocalDateTime from,
-            @RequestParam @DateTimeFormat LocalDateTime to
-    ) {
+            @RequestParam @DateTimeFormat LocalDateTime to) {
         List<EventDto> eventDtos = eventService.getEventByTime(from, to);
         System.out.println("Events being returned: " + eventDtos); // Or use a proper logger
         return ResponseEntity.ok(eventDtos);
     }
 
-    @PutMapping("/api/events/{id}")
+    @PutMapping("/events/{id}")
     public ResponseEntity<EventDto> updateEvent(@PathVariable Long id, @Valid @RequestBody EventCreateDto dto) {
         EventDto eventDto = eventService.updateEvent(id, dto);
         return ResponseEntity.ok(eventDto);

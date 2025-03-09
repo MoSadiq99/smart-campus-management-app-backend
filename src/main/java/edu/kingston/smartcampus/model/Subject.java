@@ -1,5 +1,8 @@
 package edu.kingston.smartcampus.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.kingston.smartcampus.model.enums.SubjectType;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -19,9 +22,9 @@ public class Subject {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private SubjectType subjectType; 
+    private SubjectType subjectType;
 
-    @ManyToOne
-    @JoinColumn(name = "course_id", nullable = false)
-    private Course course; // The course this subject belongs to
+    @ManyToMany
+    @JoinTable(name = "course_subjects", joinColumns = @JoinColumn(name = "subject_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
+    private List<Course> courses = new ArrayList<>();
 }

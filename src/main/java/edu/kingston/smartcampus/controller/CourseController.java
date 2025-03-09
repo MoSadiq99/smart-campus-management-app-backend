@@ -11,19 +11,32 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class CourseController {
 
     private final CourseService courseService;
 
-    @GetMapping("/api/courses")
+    @GetMapping("/courses")
     public ResponseEntity<List<CourseDto>> getCourses() {
         List<CourseDto> courseDto = courseService.getCourses();
         return ResponseEntity.ok(courseDto);
     }
 
-    @PostMapping("/api/courses")
+    @GetMapping("/courses/{courseCode}")
+    public ResponseEntity<CourseDto> getCourseByCode(@PathVariable String courseCode) {
+        CourseDto courseDto = courseService.getCourseByCode(courseCode);
+        return ResponseEntity.ok(courseDto);
+    }
+
+    @PostMapping("/courses")
     public ResponseEntity<CourseDto> createCourse(@Valid @RequestBody CourseCreateDto dto) {
         CourseDto courseDto = courseService.createCourse(dto);
+        return ResponseEntity.ok(courseDto);
+    }
+
+    @PutMapping("/courses/{id}")
+    public ResponseEntity<CourseDto> updateCourse(@PathVariable Long id, @Valid @RequestBody CourseDto dto) {
+        CourseDto courseDto = courseService.updateCourse(id, dto);
         return ResponseEntity.ok(courseDto);
     }
 }
