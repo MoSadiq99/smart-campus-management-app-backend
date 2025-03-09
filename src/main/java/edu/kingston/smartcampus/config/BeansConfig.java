@@ -50,13 +50,12 @@ public class BeansConfig {
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:4200");
-        config.addAllowedOrigin("*");
+        // config.addAllowedOrigin("*");
         config.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.AUTHORIZATION,
                 HttpHeaders.CONTENT_TYPE,
                 HttpHeaders.ACCEPT,
-                HttpHeaders.ORIGIN
-        ));
+                HttpHeaders.ORIGIN));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
@@ -67,7 +66,7 @@ public class BeansConfig {
         return web -> web.ignoring()
                 .requestMatchers(
                         "/ws",
-                        "/api/**", //! for testing
+                        "/api/**", // ! for testing
                         "/api/auth/**",
                         "/v2/api-docs",
                         "/v3/api-docs",
@@ -80,7 +79,6 @@ public class BeansConfig {
                         "/swagger-ui.html",
                         "swagger-ui/index.html",
                         "/swagger-ui/**",
-                        "/webjars/**"
-                );
+                        "/webjars/**");
     }
 }
