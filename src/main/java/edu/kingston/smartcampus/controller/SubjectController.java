@@ -23,9 +23,21 @@ public class SubjectController {
         return ResponseEntity.ok(subjectDtos);
     }
 
+    @GetMapping("/subjects/{id}")
+    public ResponseEntity<SubjectDto> getSubjectById(@PathVariable Long id) {
+        SubjectDto subjectDto = subjectService.getSubjectById(id);
+        return ResponseEntity.ok(subjectDto);
+    }
+
     @PostMapping("/subjects")
     public ResponseEntity<SubjectDto> createCourse(@Valid @RequestBody SubjectCreateDto dto) {
         SubjectDto subjectDto = subjectService.createSubject(dto);
+        return ResponseEntity.ok(subjectDto);
+    }
+
+    @PutMapping("/subjects/{id}")
+    public ResponseEntity<SubjectDto> updateSubject(@PathVariable Long id, @Valid @RequestBody SubjectDto dto) {
+        SubjectDto subjectDto = subjectService.updateSubject(id, dto);
         return ResponseEntity.ok(subjectDto);
     }
 }

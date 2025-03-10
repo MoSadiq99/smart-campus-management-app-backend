@@ -38,11 +38,30 @@ public class SubjectService {
 
     }
 
+    public SubjectDto getSubjectById(Long subjectId) {
+        Subject subject = subjectRepository.findById(subjectId)
+                .orElseThrow(() -> new RuntimeException("Subject not found"));
+        SubjectDto subjectDto = new SubjectDto();
+        mapToSubjectDto(subject, subjectDto);
+        return subjectDto;
+    }
+
+    public SubjectDto updateSubject(Long subjectId, SubjectDto dto) {
+        Subject subject = subjectRepository.findById(subjectId)
+                .orElseThrow(() -> new RuntimeException("Subject not found"));
+        subject.setSubjectName(dto.getSubjectName());
+        subject.setDescription(dto.getDescription());
+        Subject savedSubject = subjectRepository.save(subject);
+        SubjectDto subjectDto = new SubjectDto();
+        mapToSubjectDto(savedSubject, subjectDto);
+        return subjectDto;
+    }
+
     private void mapToSubjectDto(Subject subject, SubjectDto subjectDto) {
         subjectDto.setSubjectId(subject.getSubjectId());
         subjectDto.setSubjectName(subject.getSubjectName());
         subjectDto.setDescription(subject.getDescription());
-        subjectDto.setCourseId(subject.getCourses().stream()
+        subjectDto.setCourseIds(subject.getCourses().stream()
                 .map(Course::getCourseId)
                 .collect(Collectors.toList()));
     }
