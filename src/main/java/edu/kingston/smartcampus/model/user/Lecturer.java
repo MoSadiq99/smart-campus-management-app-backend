@@ -18,6 +18,6 @@ public class Lecturer extends User {
 
     private String department; // e.g., "Computer Science"
 
-    @OneToMany(mappedBy = "lecturer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "coordinator", cascade = CascadeType.ALL)
     private List<Course> coursesTaught; // Courses this lecturer teaches
 }

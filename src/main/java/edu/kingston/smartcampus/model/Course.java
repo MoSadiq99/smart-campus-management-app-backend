@@ -6,7 +6,8 @@ import edu.kingston.smartcampus.model.user.Student;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,27 +19,28 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long courseId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String courseCode; // e.g., "CS101"
 
     @Column(nullable = false)
     private String courseName; // e.g., "Introduction to Programming"
 
     private String description;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private Integer credits;
 
     @ManyToOne
     @JoinColumn(name = "lecturer_id", nullable = false)
-    private Lecturer lecturer; // The lecturer teaching this course
+    private Lecturer coordinator; // The coordinator teaching this course
 
     @ManyToMany(mappedBy = "enrolledCourses")
-    private List<Student> enrolledStudents; // Students enrolled in this course
+    private List<Student> enrolledStudents = new ArrayList<>(); // Students enrolled in this course
+
+    @ManyToMany
+    @JoinTable(name = "course_subjects", joinColumns = @JoinColumn(name = "course_id"), inverseJoinColumns = @JoinColumn(name = "subject_id"))
+    private List<Subject> subjects = new ArrayList<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private List<Subject> subjects; // Subjects/topics covered in this course
-
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private List<Schedule> schedules; // Schedules related to this course
+    private List<Schedule> schedules = new ArrayList<>(); // Schedules related to this course
 }
