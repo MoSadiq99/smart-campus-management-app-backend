@@ -7,4 +7,5 @@ import lombok.Data;
 public class LecturerProfileDto {
     @NotNull(message = "Department is required")
     private String department;
+    private String profileImage;
 }

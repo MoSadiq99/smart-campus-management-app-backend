@@ -1,5 +1,6 @@
 package edu.kingston.smartcampus.model.user;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import edu.kingston.smartcampus.model.*;
 import edu.kingston.smartcampus.model.enums.UserStatus;
 import jakarta.persistence.*;
@@ -70,9 +71,11 @@ public abstract class User implements UserDetails, Principal {
     private List<Schedule> schedules;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference // Manage the forward reference
     private List<Reservation> reservations;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference // Manage the forward reference
     private List<Notification> notifications;
 
     @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL)
@@ -90,7 +93,7 @@ public abstract class User implements UserDetails, Principal {
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
     private List<Message> messages;
 
-    @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "assignedToUsers")
     private List<Task> tasks;
 
     @OneToMany(mappedBy = "uploader", cascade = CascadeType.ALL)
@@ -102,7 +105,7 @@ public abstract class User implements UserDetails, Principal {
         return status == UserStatus.ACTIVE;
     }
 
-    //! UserDetails methods
+    //* UserDetails methods
     @Override
     public boolean isAccountNonExpired() {
         return UserDetails.super.isAccountNonExpired();
@@ -133,7 +136,7 @@ public abstract class User implements UserDetails, Principal {
         return this.email;
     }
 
-    //! Principal methods
+    //* Principal methods
     @Override
     public String getName() {
         return firstName + " " + lastName;

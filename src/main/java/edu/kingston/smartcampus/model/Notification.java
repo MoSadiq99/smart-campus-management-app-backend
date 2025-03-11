@@ -1,5 +1,6 @@
 package edu.kingston.smartcampus.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import edu.kingston.smartcampus.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -16,6 +17,7 @@ public class Notification {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference // Back reference to User
     private User user;
 
     @Column(nullable = false)

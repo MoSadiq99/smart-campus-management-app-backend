@@ -21,7 +21,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://localhost:4200", "*"); // Allow Postman for testing
-    }
+                .setAllowedOrigins("http://localhost:4200").withSockJS();
 
+        // removed - .withSockJS() - to use WebSocket in Postman
+    }
 }

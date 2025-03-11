@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -16,11 +18,15 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "group_id")
-    private Group group; // Nullable for personal tasks
+    private Group group; // The group chat where ...
 
-    @ManyToOne
-    @JoinColumn(name = "assigned_to", nullable = false)
-    private User assignedTo;
+    @ManyToMany
+    @JoinTable(
+            name = "task_assigned_to_users",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> assignedToUsers = new ArrayList<>();
 
     private String title;
     private String description;

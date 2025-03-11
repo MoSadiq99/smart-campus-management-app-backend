@@ -107,7 +107,7 @@ public class UserService implements org.springframework.security.core.userdetail
         user.setPhone(dto.getPhone());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setAddress(dto.getAddress());
-        user.setProfileImage(dto.getProfileImage());
+//        user.setProfileImage(dto.getProfileImage());
         user.setStatus(UserStatus.PENDING);
         user.setRegistrationDate(LocalDateTime.now());
         user.setAccountLocked(false);
@@ -125,7 +125,7 @@ public class UserService implements org.springframework.security.core.userdetail
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         // Check if user is a Lecturer and pending
-        if (!(user instanceof Lecturer)) {
+        if (!(user instanceof Lecturer lecturer)) {
             throw new IllegalStateException("User is not a Lecturer");
         }
         if (user.getStatus() != UserStatus.PENDING) {
@@ -133,7 +133,6 @@ public class UserService implements org.springframework.security.core.userdetail
         }
 
         // Update existing Lecturer
-        Lecturer lecturer = (Lecturer) user;
         lecturer.setDepartment(dto.getDepartment());
         lecturer.setStatus(UserStatus.ACTIVE);
 
@@ -149,7 +148,7 @@ public class UserService implements org.springframework.security.core.userdetail
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         // Check if user is a Student and pending
-        if (!(user instanceof Student)) {
+        if (!(user instanceof Student student)) {
             throw new IllegalStateException("User is not a Student");
         }
         if (user.getStatus() != UserStatus.PENDING) {
@@ -157,7 +156,6 @@ public class UserService implements org.springframework.security.core.userdetail
         }
 
         // Update existing Student
-        Student student = (Student) user;
         student.setStudentIdNumber(dto.getStudentIdNumber());
         student.setMajor(dto.getMajor());
         student.setStatus(UserStatus.ACTIVE);
@@ -174,7 +172,7 @@ public class UserService implements org.springframework.security.core.userdetail
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         // Check if user is an Admin and pending
-        if (!(user instanceof Admin)) {
+        if (!(user instanceof Admin admin)) {
             throw new IllegalStateException("User is not an Admin");
         }
         if (user.getStatus() != UserStatus.PENDING) {
@@ -182,7 +180,6 @@ public class UserService implements org.springframework.security.core.userdetail
         }
 
         // Update existing Admin
-        Admin admin = (Admin) user;
         admin.setAdminTitle(dto.getAdminTitle());
         admin.setStatus(UserStatus.ACTIVE);
 
@@ -224,12 +221,12 @@ public class UserService implements org.springframework.security.core.userdetail
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setEmail(user.getEmail());
-        dto.setPhone(user.getPhone());
-        dto.setAddress(user.getAddress());
-        dto.setProfileImage(user.getProfileImage());
+//        dto.setPhone(user.getPhone());
+//        dto.setAddress(user.getAddress());
+//        dto.setProfileImage(user.getProfileImage());
         dto.setStatus(user.getStatus().name());
         dto.setRoleName(user.getRole().getRoleName().name());
-        dto.setUserType(user instanceof Lecturer ? "LECTURER" : user instanceof Student ? "STUDENT" : user instanceof Admin ? "ADMIN" : "PENDING");
+//        dto.setUserType(user instanceof Lecturer ? "LECTURER" : user instanceof Student ? "STUDENT" : user instanceof Admin ? "ADMIN" : "PENDING");
     }
 
     private void mapToLecturerDto(Lecturer lecturer, LecturerDto dto) {

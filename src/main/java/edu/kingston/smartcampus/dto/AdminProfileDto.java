@@ -7,4 +7,5 @@ import lombok.Data;
 public class AdminProfileDto {
     @NotNull(message = "Admin title is required")
     private String adminTitle;
+    private String profileImage;
 }

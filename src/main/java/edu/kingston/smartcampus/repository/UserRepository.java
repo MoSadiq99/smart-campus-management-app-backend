@@ -7,4 +7,8 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
+
+//    // Find user type Student
+//    @NativeQuery("SELECT * FROM user u WHERE u.user_type = 'STUDENT'")
+//    List<User> findAllStudents();
 }

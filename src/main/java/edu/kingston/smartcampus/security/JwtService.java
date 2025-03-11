@@ -27,6 +27,13 @@ public class JwtService {
         return generateToken(new HashMap<>(), userDetails);
     }
 
+    // Overloaded method to include userId
+    public String generateToken(UserDetails userDetails, Long userId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", userId); // Add user ID to claims
+        return generateToken(claims, userDetails);
+    }
+
     public String generateToken(Map<String, Object> claims, UserDetails userDetails) {
         return buildToken(claims, userDetails, JwtExpiration);
     }

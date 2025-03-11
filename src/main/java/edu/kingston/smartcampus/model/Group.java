@@ -3,6 +3,7 @@ package edu.kingston.smartcampus.model;
 import edu.kingston.smartcampus.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,6 +16,10 @@ public class Group {
     private Long groupId;
 
     private String groupName;
+
+    @ManyToOne
+    @JoinColumn(name = "course_id", nullable = false)
+    private Course course;
 
     @ManyToOne
     @JoinColumn(name = "creator_id", nullable = false)

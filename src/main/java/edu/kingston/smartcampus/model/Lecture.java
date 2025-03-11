@@ -1,6 +1,5 @@
 package edu.kingston.smartcampus.model;
 
-
 import edu.kingston.smartcampus.model.user.Lecturer;
 import jakarta.persistence.*;
 import lombok.Data;
