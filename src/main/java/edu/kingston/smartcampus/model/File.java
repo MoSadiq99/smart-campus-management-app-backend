@@ -20,9 +20,9 @@ public class File {
 
     @ManyToOne
     @JoinColumn(name = "group_id")
-    private Group group; // Nullable for personal files
+    private Group group; // Nullable for personnel files
 
     private String fileName;
     private String filePath;
-    private LocalDateTime uploadDate;
+    private LocalDateTime uploadTime;
 }

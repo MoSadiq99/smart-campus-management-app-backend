@@ -14,4 +14,6 @@ public class GroupDto {
     private LocalDateTime creationDate;
     private List<Long> memberIds;
     private List<MessageDto> messages;
+    private List<TaskDto> tasks;
+    private List<FileDto> files;
 }

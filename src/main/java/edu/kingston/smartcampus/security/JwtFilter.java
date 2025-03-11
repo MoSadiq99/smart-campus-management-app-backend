@@ -5,7 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,55 +33,18 @@ public class JwtFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
 
     ) throws ServletException, IOException {
-        if (request.getServletPath().contains("/ws")) {
-            filterChain.doFilter(request, response);
-        }
-
-        if (request.getServletPath().contains("/api/**")) { //! for testing
-            filterChain.doFilter(request, response);
-        }
-        if (request.getServletPath().contains("/api/auth/**")) {
-            filterChain.doFilter(request, response);
-        }
-
-        if (request.getServletPath().contains("/v2/api-docs")) {
-            filterChain.doFilter(request, response);
-        }
-        if (request.getServletPath().contains("/v3/api-docs")) {
-            filterChain.doFilter(request, response);
-        }
-        if (request.getServletPath().contains("/v3/api-docs/**")) {
-            filterChain.doFilter(request, response);
-        }
-        if (request.getServletPath().contains("/swagger-resources")) {
-            filterChain.doFilter(request, response);
-        }
-        if (request.getServletPath().contains("/swagger-resources/**")) {
-            filterChain.doFilter(request, response);
-        }
-        if (request.getServletPath().contains("/configuration/ui")) {
-            filterChain.doFilter(request, response);
-        }
-        if (request.getServletPath().contains("/configuration/security")) {
-            filterChain.doFilter(request, response);
-        }
-        if (request.getServletPath().contains("/swagger-ui.html")) {
-            filterChain.doFilter(request, response);
-        }
-        if (request.getServletPath().contains("/swagger-ui/index.html")) {
-            filterChain.doFilter(request, response);
-        }
-        if (request.getServletPath().contains("/swagger-ui")) {
-            filterChain.doFilter(request, response);
-        }
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String jwt;
         final String userEmail;
+
+        // Skip JWT processing if no valid Authorization header
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
+
+        // Extract and validate JWT
         jwt = authHeader.substring(7);
         userEmail = jwtService.extractUsername(jwt);
 

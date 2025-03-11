@@ -10,4 +10,6 @@ public class StudentProfileDto {
 
     @NotNull(message = "Major is required")
     private String major;
+
+    private String profileImage;
 }

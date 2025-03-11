@@ -2,19 +2,21 @@ package edu.kingston.smartcampus.controller;
 
 import edu.kingston.smartcampus.dto.*;
 import edu.kingston.smartcampus.security.JwtService;
+import edu.kingston.smartcampus.security.MyUserDetailsService;
 import edu.kingston.smartcampus.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -22,6 +24,7 @@ public class UserController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final MyUserDetailsService userDetailsService;
 
     @PostMapping("/api/register")
     public ResponseEntity<AuthResponseDto> registerUser(@Valid @RequestBody UserRegisterDto dto) {
@@ -30,14 +33,33 @@ public class UserController {
         return ResponseEntity.ok(new AuthResponseDto(token, userDto));
     }
 
+//    @PostMapping("/api/authenticate")
+//    public ResponseEntity<AuthResponseDto> authenticate(@RequestBody AuthRequestDto dto) {
+//        Authentication auth = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
+//        );
+//        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+//        String token = jwtService.generateToken(userDetails);
+//        UserDto userDto = userService.getUserByEmail(dto.getEmail());
+//        return ResponseEntity.ok(new AuthResponseDto(token, userDto));
+//    }
+
     @PostMapping("/api/authenticate")
     public ResponseEntity<AuthResponseDto> authenticate(@RequestBody AuthRequestDto dto) {
-        Authentication auth = authenticationManager.authenticate(
+        // Authenticate user
+        authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
         );
-        UserDetails userDetails = (UserDetails) auth.getPrincipal();
-        String token = jwtService.generateToken(userDetails);
+
+        // Load UserDetails and User entity
+        UserDetails userDetails = userDetailsService.loadUserByUsername(dto.getEmail());
         UserDto userDto = userService.getUserByEmail(dto.getEmail());
+        // Generate token with user ID
+        String token = jwtService.generateToken(userDetails, userDto.getUserId());
+
+        log.info("Token: {}", token);
+        log.info("User ID: {}", userDto.getUserId());
+        // Build response
         return ResponseEntity.ok(new AuthResponseDto(token, userDto));
     }
 
