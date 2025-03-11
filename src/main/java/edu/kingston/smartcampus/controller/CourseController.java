@@ -28,6 +28,18 @@ public class CourseController {
         return ResponseEntity.ok(courseDto);
     }
 
+    @GetMapping("/courses/{courseId}/enrolled-students")
+    public ResponseEntity<List<Long>> getEnrolledStudents(@PathVariable Long courseId) {
+        List<Long> studentIds = courseService.getEnrolledStudents(courseId);
+        return ResponseEntity.ok(studentIds);
+    }
+
+    @PostMapping("/courses/{courseId}/enrolled-students")
+    public ResponseEntity<Void> enrollStudents(@PathVariable Long courseId, @RequestBody List<Long> studentIds) {
+        courseService.enrollStudents(courseId, studentIds);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/courses")
     public ResponseEntity<CourseDto> createCourse(@Valid @RequestBody CourseCreateDto dto) {
         CourseDto courseDto = courseService.createCourse(dto);

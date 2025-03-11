@@ -33,7 +33,8 @@ public class Course {
     @JoinColumn(name = "lecturer_id", nullable = false)
     private User coordinator; // Changed to User instead of Lecturer - SDQ
 
-    @ManyToMany(mappedBy = "enrolledCourses")
+    @ManyToMany
+    @JoinTable(name = "student_courses", joinColumns = @JoinColumn(name = "course_id"), inverseJoinColumns = @JoinColumn(name = "student_id"))
     private List<Student> enrolledStudents = new ArrayList<>(); // Students enrolled in this course
 
     @ManyToMany
@@ -45,5 +46,5 @@ public class Course {
     private List<Subject> subjects = new ArrayList<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private List<Schedule> schedules = new ArrayList<>(); // Schedules related to this course
+    private List<Schedule> schedules; // Schedules related to this course
 }

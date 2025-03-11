@@ -17,10 +17,6 @@ public class Student extends User {
     private String major; // e.g., "Computer Science"
 
     @ManyToMany
-    @JoinTable(
-            name = "student_courses",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id")
-    )
+    @JoinTable(name = "student_courses", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
     private List<Course> enrolledCourses; // Courses this student is enrolled in
 }
