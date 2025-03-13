@@ -91,7 +91,8 @@ public class ReservationService {
 
         // Handle recurrence
         if (reservationCreateDto.getRecurrence() != null) {
-            reservationsToSave.addAll(createRecurringReservations(baseReservation, reservationCreateDto.getRecurrence()));
+            reservationsToSave
+                    .addAll(createRecurringReservations(baseReservation, reservationCreateDto.getRecurrence()));
         } else {
             reservationsToSave.add(baseReservation);
         }
@@ -102,8 +103,9 @@ public class ReservationService {
                     resource,
                     reservation.getStartTime(),
                     reservation.getEndTime())) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, ("Resource is already reserved for the time slot: " +
-                        reservation.getStartTime() + " to " + reservation.getEndTime()));
+                throw new ResponseStatusException(HttpStatus.CONFLICT,
+                        ("Resource is already reserved for the time slot: " +
+                                reservation.getStartTime() + " to " + reservation.getEndTime()));
             }
         }
 
@@ -118,10 +120,12 @@ public class ReservationService {
         List<Reservation> recurringReservations = new ArrayList<>();
         LocalDateTime start = baseReservation.getStartTime();
         LocalDateTime end = baseReservation.getEndTime();
-        LocalDateTime endDate = recurrence.getEndDate() != null ? recurrence.getEndDate() : start.plusYears(1); // Default to 1 year if no end date
-        int interval = recurrence.getInterval();
+        // Default to 1 year
+        LocalDateTime endDate = recurrence.getEndDate() != null ? recurrence.getEndDate() : start.plusYears(1);
+        int interval = recurrence.getRecurrenceInterval();
         String frequency = recurrence.getFrequency();
-        List<Integer> daysOfWeek = recurrence.getDaysOfWeek() != null ? recurrence.getDaysOfWeek() : List.of(start.getDayOfWeek().getValue() % 7);
+        List<Integer> daysOfWeek = recurrence.getDaysOfWeek() != null ? recurrence.getDaysOfWeek()
+                : List.of(start.getDayOfWeek().getValue() % 7);
 
         LocalDateTime currentStart = start;
         LocalDateTime currentEnd = end;

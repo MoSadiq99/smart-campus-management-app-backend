@@ -1,5 +1,6 @@
 package edu.kingston.smartcampus.model;
 
+import edu.kingston.smartcampus.dto.RecurrencePattern;
 import edu.kingston.smartcampus.model.user.Lecturer;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -20,6 +21,9 @@ public class Lecture {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
+    @Embedded
+    private RecurrencePattern recurrencePattern;
+
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
@@ -33,11 +37,6 @@ public class Lecture {
     private Subject subject;
 
     @ManyToMany
-    @JoinTable(
-            name = "lecture_resources",
-            joinColumns = @JoinColumn(name = "lecture_id"),
-            inverseJoinColumns = @JoinColumn(name = "resource_id")
-    )
+    @JoinTable(name = "lecture_resources", joinColumns = @JoinColumn(name = "lecture_id"), inverseJoinColumns = @JoinColumn(name = "resource_id"))
     private List<Resource> resources;
 }
-
