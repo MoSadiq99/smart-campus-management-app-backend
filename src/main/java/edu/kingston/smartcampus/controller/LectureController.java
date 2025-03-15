@@ -5,14 +5,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import edu.kingston.smartcampus.dto.LectureCreateDto;
 import edu.kingston.smartcampus.dto.LectureDto;
+import edu.kingston.smartcampus.dto.ReservationCreateDto;
+import edu.kingston.smartcampus.dto.ReservationDto;
+import edu.kingston.smartcampus.model.Reservation;
 import edu.kingston.smartcampus.service.LectureService;
-import jakarta.websocket.server.PathParam;
+import edu.kingston.smartcampus.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,24 +32,39 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class LectureController {
 
     private final LectureService lectureService;
+    private final ReservationService reservationService;
 
     @PostMapping("/lectures")
-    public ResponseEntity<LectureDto> createLecture(@RequestBody LectureCreateDto dto) {
-        LectureDto lectureDto = lectureService.createLecture(dto);
-        return ResponseEntity.ok(lectureDto);
+    public ResponseEntity<ReservationDto> createLecture(@RequestBody LectureCreateDto dto) {
+        ReservationDto reservationDto = lectureService.createLecture(dto);
+        return ResponseEntity.ok(reservationDto);
     }
 
-    // @GetMapping("/lectures")
-    // public ResponseEntity<List<LectureDto>> getLectures() {
-    // List<LectureDto> lectureDtos = lectureService.getLectures();
-    // return ResponseEntity.ok(lectureDtos);
-    // }
-
     @GetMapping("/lectures")
-    public ResponseEntity<List<LectureDto>> getLecturesByTime(@RequestParam @DateTimeFormat LocalDateTime from,
-            @RequestParam @DateTimeFormat LocalDateTime to) {
-        List<LectureDto> lectureDtos = lectureService.getLecturesByTime(from, to);
+    public ResponseEntity<List<LectureDto>> getLecturesByTime() {
+        List<LectureDto> lectureDtos = lectureService.getLectures();
         return ResponseEntity.ok(lectureDtos);
+    }
+
+    @GetMapping("/lectures/reservations")
+    public ResponseEntity<List<ReservationDto>> getReservations(
+            @RequestParam("from") String from,
+            @RequestParam("to") String to) {
+        LocalDateTime start = LocalDateTime.parse(from);
+        LocalDateTime end = LocalDateTime.parse(to);
+        List<Reservation> reservations = reservationService.getReservationsInRange(start, end);
+        List<ReservationDto> reservationDtos = reservations.stream()
+                .map(reservationService::mapToReservationDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(reservationDtos);
+    }
+
+    @PostMapping("/lectures/reservations")
+    public ResponseEntity<ReservationDto> createReservation(
+            @RequestBody ReservationCreateDto reservationCreateDto,
+            @RequestParam("userId") Long userId) {
+        ReservationDto reservationDto = reservationService.createReservation(reservationCreateDto, userId);
+        return ResponseEntity.ok(reservationDto);
     }
 
     @PutMapping("lectures/{lectureId}")

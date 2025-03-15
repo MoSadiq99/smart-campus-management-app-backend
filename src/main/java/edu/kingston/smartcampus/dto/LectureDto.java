@@ -1,7 +1,6 @@
 package edu.kingston.smartcampus.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import lombok.Data;
 
@@ -14,7 +13,7 @@ public class LectureDto {
     private LocalDateTime endTime;
     private RecurrencePattern recurrencePattern;
     private Long courseId;
-    private long lecturerId;
-    private long subjectId;
-    private List<Long> resources;
+    private Long lecturerId;
+    private Long subjectId;
+    private Long resource;
 }

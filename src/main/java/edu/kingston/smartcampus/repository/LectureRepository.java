@@ -13,4 +13,6 @@ public interface LectureRepository extends JpaRepository<Lecture, Long> {
     Optional<List<Lecture>> findBySubject(Subject subject);
 
     Optional<List<Lecture>> findByStartTimeBetween(LocalDateTime from, LocalDateTime to);
+
+    Optional<List<Lecture>> findByStartTimeBetweenAndResource(LocalDateTime from, LocalDateTime to, Subject subject);
 }

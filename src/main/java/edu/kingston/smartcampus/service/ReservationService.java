@@ -142,6 +142,7 @@ public class ReservationService {
             }
 
             Reservation recurringReservation = new Reservation();
+            recurringReservation.setTitle(baseReservation.getTitle());
             recurringReservation.setUser(baseReservation.getUser());
             recurringReservation.setResource(baseReservation.getResource());
             recurringReservation.setLecture(baseReservation.getLecture());
