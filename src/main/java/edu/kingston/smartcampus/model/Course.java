@@ -33,9 +33,9 @@ public class Course {
     @JoinColumn(name = "lecturer_id", nullable = false)
     private User coordinator; // Changed to User instead of Lecturer - SDQ
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "student_courses", joinColumns = @JoinColumn(name = "course_id"), inverseJoinColumns = @JoinColumn(name = "student_id"))
-    private List<Student> enrolledStudents = new ArrayList<>(); // Students enrolled in this course
+    private List<Student> enrolledStudents = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(

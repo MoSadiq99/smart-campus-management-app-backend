@@ -10,6 +10,7 @@ import edu.kingston.smartcampus.repository.CourseRepository;
 import edu.kingston.smartcampus.repository.LecturerRepository;
 import edu.kingston.smartcampus.repository.StudentRepository;
 import edu.kingston.smartcampus.repository.SubjectRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CourseService {
     private final LecturerRepository lecturerRepository;
     private final CourseRepository courseRepository;
@@ -61,6 +63,7 @@ public class CourseService {
         return courseDto;
     }
 
+    @Transactional
     public List<Long> getEnrolledStudents(Long courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("Course not found"));
@@ -75,7 +78,6 @@ public class CourseService {
 //                .orElseThrow(() -> new IllegalArgumentException("Course not found"));
         return studentService.getEnrolledStudentsByCourse(courseId);
     }
-
 
     public void enrollStudents(Long courseId, List<Long> studentIds) {
         Course course = courseRepository.findById(courseId)
