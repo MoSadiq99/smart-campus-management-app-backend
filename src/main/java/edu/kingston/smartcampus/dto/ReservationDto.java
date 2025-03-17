@@ -15,5 +15,5 @@ public class ReservationDto {
     private Long lectureId; // Optional: ID of the associated lecture
     private Long eventId; // Optional: ID of the associated event
     private String status;
-//    private RecurrencePattern recurrence; // Optional: Recurrence pattern for recurring reservations
+    private RecurrencePattern recurrence; // Optional: Recurrence pattern for recurring reservations
 }
