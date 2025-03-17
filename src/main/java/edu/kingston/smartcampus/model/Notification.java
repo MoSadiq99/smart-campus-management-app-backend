@@ -1,6 +1,7 @@
 package edu.kingston.smartcampus.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import edu.kingston.smartcampus.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -23,6 +24,8 @@ public class Notification {
     @Column(nullable = false)
     private String message;
     private String type; // e.g., "Email", "SMS"
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime sentTime;
     private String status;
 

@@ -21,27 +21,23 @@ public class GroupController {
 
     private final GroupService groupService;
 
+    //* Post Mappings
+
+    // Post Mapping: Create Group
     @PostMapping("/groups")
-    public ResponseEntity<GroupDto> createGroup(
-            @RequestBody GroupCreateDto dto,
-            Long creatorId
-    ) {
-        GroupDto createdGroup = groupService.createGroup(dto, creatorId);
+    public ResponseEntity<GroupDto> createGroup(@RequestBody GroupCreateDto dto) {
+        GroupDto createdGroup = groupService.createGroup(dto, dto.getCreatorId());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdGroup);
     }
 
-    @GetMapping("/groups")
-    public ResponseEntity<List<GroupDto>> getAllGroups() {
-        List<GroupDto> groups = groupService.getAllGroups();
-        return ResponseEntity.ok(groups);
-    }
-
+    // Post Mapping: Add Group Member
     @PostMapping("/groups/{id}/members")
     public ResponseEntity<GroupDto> addGroupMember(@PathVariable Long id, @RequestBody Long userId) {
         GroupDto groupDto = groupService.addGroupMember(id, userId);
         return ResponseEntity.ok(groupDto);
     }
 
+    // Post Mapping: Send Group Message
     @PostMapping("/groups/{id}/messages")
     public ResponseEntity<MessageDto> sendGroupMessage(@PathVariable Long id,
                                                        @Valid @RequestBody MessageCreateDto dto) {
@@ -67,6 +63,21 @@ public class GroupController {
         return ResponseEntity.ok(fileDto);
     }
 
+    //* Get Mappings
+
+    // Get Mapping: Get All Groups
+    @GetMapping("/groups")
+    public ResponseEntity<List<GroupDto>> getAllGroups() {
+        List<GroupDto> groups = groupService.getAllGroups();
+        return ResponseEntity.ok(groups);
+    }
+
+    @GetMapping("/groups/{id}")
+    public ResponseEntity<GroupDto> getGroupById(@PathVariable Long id) {
+        GroupDto groupDto = groupService.getGroupById(id);
+        return ResponseEntity.ok(groupDto);
+    }
+
     @GetMapping("/groups/{groupId}/files/{fileId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable Long fileId, @PathVariable Long groupId) {
         return groupService.downloadFile(fileId);
@@ -78,10 +89,24 @@ public class GroupController {
         return ResponseEntity.ok(files);
     }
 
-//    public ResponseEntity<FileDto> uploadGroupFile(@PathVariable Long id,
-//                                                   @RequestParam("file") MultipartFile file) {
-//        FileDto fileDto = groupService.uploadGroupFile(id, file);
-//        return ResponseEntity.ok(fileDto);
-//    }
+    @GetMapping("/groups/{groupId}/members")
+    public ResponseEntity<List<UserDto>> getGroupMembers(@PathVariable Long groupId) {
+        return groupService.getGroupMembers(groupId);
+    }
 
+    @GetMapping("/groups/{groupId}/tasks")
+    public ResponseEntity<List<TaskDto>> getGroupTasks(@PathVariable Long groupId) {
+        return groupService.getGroupTasks(groupId);
+    }
+
+    //* Delete Mappings
+
+    // Delete Mapping: Delete Task
+    @DeleteMapping("/groups/tasks/{taskId}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) {
+        groupService.deleteTask(taskId);
+        return ResponseEntity.ok().build();
+    }
 }
+
+

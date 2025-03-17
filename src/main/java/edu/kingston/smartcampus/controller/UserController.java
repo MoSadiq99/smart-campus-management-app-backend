@@ -33,16 +33,6 @@ public class UserController {
         return ResponseEntity.ok(new AuthResponseDto(token, userDto));
     }
 
-//    @PostMapping("/api/authenticate")
-//    public ResponseEntity<AuthResponseDto> authenticate(@RequestBody AuthRequestDto dto) {
-//        Authentication auth = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
-//        );
-//        UserDetails userDetails = (UserDetails) auth.getPrincipal();
-//        String token = jwtService.generateToken(userDetails);
-//        UserDto userDto = userService.getUserByEmail(dto.getEmail());
-//        return ResponseEntity.ok(new AuthResponseDto(token, userDto));
-//    }
 
     @PostMapping("/api/authenticate")
     public ResponseEntity<AuthResponseDto> authenticate(@RequestBody AuthRequestDto dto) {
@@ -68,6 +58,12 @@ public class UserController {
             @PathVariable Long id, @Valid @RequestBody LecturerProfileDto dto) {
         LecturerDto lecturerDto = userService.setLecturerProfile(id, dto);
         return ResponseEntity.ok(lecturerDto);
+    }
+
+    @GetMapping("/api/users/{id}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+        UserDto userDto = userService.getUserById(id);
+        return ResponseEntity.ok(userDto);
     }
 
     @PutMapping("/api/users/{id}/student-profile")

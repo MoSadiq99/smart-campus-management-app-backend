@@ -13,5 +13,4 @@ public class UserDto {
     private String profileImage;
     private String status;
     private String roleName;
-    private String userType;
 }

@@ -12,7 +12,7 @@ public class GroupDto {
     private Long creatorId;
     private String description;
     private LocalDateTime creationDate;
-    private List<Long> memberIds;
+    private List<UserDto> members;
     private List<MessageDto> messages;
     private List<TaskDto> tasks;
     private List<FileDto> files;

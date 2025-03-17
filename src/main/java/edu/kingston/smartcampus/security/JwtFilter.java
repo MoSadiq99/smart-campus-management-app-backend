@@ -44,6 +44,37 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
+//        if (request.getServletPath().contains("/v2/api-docs")) {
+//            filterChain.doFilter(request, response);
+//        }
+//        if (request.getServletPath().contains("/v3/api-docs")) {
+//            filterChain.doFilter(request, response);
+//        }
+//        if (request.getServletPath().contains("/v3/api-docs/**")) {
+//            filterChain.doFilter(request, response);
+//        }
+//        if (request.getServletPath().contains("/swagger-resources")) {
+//            filterChain.doFilter(request, response);
+//        }
+//        if (request.getServletPath().contains("/swagger-resources/**")) {
+//            filterChain.doFilter(request, response);
+//        }
+//        if (request.getServletPath().contains("/configuration/ui")) {
+//            filterChain.doFilter(request, response);
+//        }
+//        if (request.getServletPath().contains("/configuration/security")) {
+//            filterChain.doFilter(request, response);
+//        }
+//        if (request.getServletPath().contains("/swagger-ui.html")) {
+//            filterChain.doFilter(request, response);
+//        }
+//        if (request.getServletPath().contains("/swagger-ui/index.html")) {
+//            filterChain.doFilter(request, response);
+//        }
+//        if (request.getServletPath().contains("/swagger-ui")) {
+//            filterChain.doFilter(request, response);
+//        }
+
         // Extract and validate JWT
         jwt = authHeader.substring(7);
         userEmail = jwtService.extractUsername(jwt);

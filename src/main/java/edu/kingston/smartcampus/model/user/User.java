@@ -67,36 +67,36 @@ public abstract class User implements UserDetails, Principal {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Schedule> schedules;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference // Manage the forward reference
     private List<Reservation> reservations;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference // Manage the forward reference
     private List<Notification> notifications;
 
-    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Event> organizedEvents;
 
     @ManyToMany(mappedBy = "attendees")
     private List<Event> attendedEvents;
 
-    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Group> createdGroups;
 
-    @ManyToMany(mappedBy = "members")
+    @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Group> groups;
 
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Message> messages;
 
-    @ManyToMany(mappedBy = "assignedToUsers")
+    @ManyToMany(mappedBy = "assignedToUsers", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Task> tasks;
 
-    @OneToMany(mappedBy = "uploader", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "uploader", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<File> files;
 
     private boolean accountLocked;

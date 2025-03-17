@@ -1,30 +1,53 @@
 package edu.kingston.smartcampus.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import edu.kingston.smartcampus.security.MyUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-public class BeansConfig {
+@EnableWebSocketMessageBroker // Enable WebSocket support
+public class BeansConfig implements WebSocketMessageBrokerConfigurer {
 
     private final MyUserDetailsService userDetailsService;
 
     public BeansConfig(MyUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
+    }
+
+    @Bean
+    @Primary
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule()); // Explicitly register JavaTimeModule
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false); // Use ISO format
+        return objectMapper;
+    }
+
+    @Bean
+    public MappingJackson2MessageConverter mappingJackson2MessageConverter(ObjectMapper objectMapper) {
+        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+        converter.setObjectMapper(objectMapper); // Use the custom ObjectMapper
+        return converter;
     }
 
     @Bean
@@ -86,24 +109,24 @@ public class BeansConfig {
         return new CorsFilter(source);
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring()
-                .requestMatchers(
-                        "/ws",
-                        "/api/**", // ! for testing
-                        "/api/auth/**",
-                        "/v2/api-docs",
-                        "/v3/api-docs",
-                        "/v3/api-docs/**",
-                        "/api-docs",
-                        "/swagger-resources",
-                        "/swagger-resources/**",
-                        "/configuration/ui",
-                        "/configuration/security",
-                        "/swagger-ui.html",
-                        "swagger-ui/index.html",
-                        "/swagger-ui/**",
-                        "/webjars/**");
-    }
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return web -> web.ignoring()
+//                .requestMatchers(
+//                        "/ws",
+//                        "/api/**", // ! for testing
+//                        "/api/auth/**",
+//                        "/v2/api-docs",
+//                        "/v3/api-docs",
+//                        "/v3/api-docs/**",
+//                        "/api-docs",
+//                        "/swagger-resources",
+//                        "/swagger-resources/**",
+//                        "/configuration/ui",
+//                        "/configuration/security",
+//                        "/swagger-ui.html",
+//                        "swagger-ui/index.html",
+//                        "/swagger-ui/**",
+//                        "/webjars/**");
+//    }
 }

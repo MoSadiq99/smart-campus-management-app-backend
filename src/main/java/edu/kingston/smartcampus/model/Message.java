@@ -23,5 +23,6 @@ public class Message {
     private Group group; // Nullable for direct messages
 
     private String content;
+
     private LocalDateTime sentTime;
 }

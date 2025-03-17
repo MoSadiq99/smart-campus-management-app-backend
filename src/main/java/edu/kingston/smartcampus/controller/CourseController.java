@@ -1,13 +1,15 @@
 package edu.kingston.smartcampus.controller;
 
-import java.util.List;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import edu.kingston.smartcampus.dto.CourseCreateDto;
 import edu.kingston.smartcampus.dto.CourseDto;
+import edu.kingston.smartcampus.dto.StudentDto;
 import edu.kingston.smartcampus.service.CourseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,6 +40,12 @@ public class CourseController {
     public ResponseEntity<Void> enrollStudents(@PathVariable Long courseId, @RequestBody List<Long> studentIds) {
         courseService.enrollStudents(courseId, studentIds);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/courses/{courseId}/enrolled-students-list")
+    public ResponseEntity<List<StudentDto>> getEnrolledStudentsList(@PathVariable Long courseId) {
+        List<StudentDto> enrolledStudentDtos = courseService.getEnrolledStudentsList(courseId);
+        return ResponseEntity.ok(enrolledStudentDtos);
     }
 
     @PostMapping("/courses")

@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 public class NotificationService {
 
@@ -33,7 +31,7 @@ public class NotificationService {
         notification.setUser(user);
         notification.setMessage(message);
         notification.setType(type);
-        notification.setSentTime(LocalDateTime.now());
+//        notification.setSentTime(LocalDateTime.now());
         notification.setStatus("Sent");
         notification.setRead(false);
         notificationRepository.save(notification);
