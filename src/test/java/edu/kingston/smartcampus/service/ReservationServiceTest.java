@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -18,10 +21,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
+import edu.kingston.smartcampus.controller.ResourceController;
 import edu.kingston.smartcampus.dto.ReservationCreateDto;
 import edu.kingston.smartcampus.dto.ReservationDto;
 import edu.kingston.smartcampus.model.Event;
@@ -54,6 +60,9 @@ public class ReservationServiceTest {
 
     @InjectMocks
     private ReservationService reservationService;
+
+    @InjectMocks
+    private ResourceController resourceController;
 
     private ReservationCreateDto reservationCreateDto;
     private ReservationDto reservationDto;
@@ -101,7 +110,6 @@ public class ReservationServiceTest {
 
     @Test
     void testCreateReservation() {
-        // Arrange
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(admin));
         when(resourceRepository.findById(anyLong())).thenReturn(Optional.of(resource));
         when(lectureRepository.findById(anyLong())).thenReturn(Optional.of(lecture));
@@ -109,10 +117,8 @@ public class ReservationServiceTest {
         when(reservationRepository.existsByResourceAndTimeRange(any(), any(), any())).thenReturn(false);
         when(reservationRepository.saveAll(anyList())).thenReturn(Collections.singletonList(existingReservation));
 
-        // Act
         ReservationDto result = reservationService.createReservation(reservationCreateDto, 1L);
 
-        // Assert
         assertNotNull(result);
         assertEquals(reservationCreateDto.getTitle(), result.getTitle());
         assertEquals(reservationCreateDto.getResourceId(), result.getResourceId());
@@ -120,14 +126,12 @@ public class ReservationServiceTest {
 
     @Test
     void testCreateReservationWithConflict() {
-        // Arrange
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(admin));
         when(resourceRepository.findById(anyLong())).thenReturn(Optional.of(resource));
         when(lectureRepository.findById(anyLong())).thenReturn(Optional.of(lecture));
         when(eventRepository.findById(anyLong())).thenReturn(Optional.of(event));
         when(reservationRepository.existsByResourceAndTimeRange(any(), any(), any())).thenReturn(true);
 
-        // Act & Assert
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
             reservationService.createReservation(reservationCreateDto, 1L);
         });
@@ -137,7 +141,6 @@ public class ReservationServiceTest {
 
     @Test
     void testUpdateReservation() {
-        // Arrange
         ReservationCreateDto updateDto = new ReservationCreateDto();
         updateDto.setResourceId(resource.getResourceId());
         updateDto.setLectureId(lecture.getId());
@@ -151,10 +154,9 @@ public class ReservationServiceTest {
         when(lectureRepository.findById(anyLong())).thenReturn(Optional.of(lecture));
         when(eventRepository.findById(anyLong())).thenReturn(Optional.of(event));
 
-        // Act
-        reservationService.updateReservation(existingReservation.getReservationId(), updateDto);
+        reservationService.updateReservation(existingReservation.getReservationId(),
+                updateDto);
 
-        // Assert
         assertEquals(updateDto.getTitle(), existingReservation.getTitle());
         assertEquals(updateDto.getStartTime(), existingReservation.getStartTime());
         assertEquals(updateDto.getEndTime(), existingReservation.getEndTime());
@@ -162,18 +164,29 @@ public class ReservationServiceTest {
 
     @Test
     void testGetReservationsInRange() {
-        // Arrange
         LocalDateTime from = LocalDateTime.now().minusDays(1);
         LocalDateTime to = LocalDateTime.now().plusDays(1);
         List<Reservation> reservations = Collections.singletonList(existingReservation);
         when(reservationRepository.findByTimeRange(from, to)).thenReturn(reservations);
 
-        // Act
         List<Reservation> result = reservationService.getReservationsInRange(from, to);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(existingReservation.getTitle(), result.get(0).getTitle());
+    }
+
+    @Test
+    public void testDeleteReservation_Success() {
+        Long reservationId = 1L;
+        Reservation mockReservation = new Reservation();
+        mockReservation.setReservationId(reservationId);
+
+        when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(mockReservation));
+        doNothing().when(reservationRepository).delete(mockReservation);
+
+        reservationService.deleteReservation(reservationId);
+
+        verify(reservationRepository, times(1)).delete(mockReservation);
     }
 }

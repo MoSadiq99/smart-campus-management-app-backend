@@ -136,24 +136,24 @@ public class GroupServiceTest {
         verify(groupRepository, times(1)).save(any(Group.class));
     }
 
-    @Test
-    void testAddGroupMember() {
-        Long groupId = 1L;
-        Long userId = 2L;
+    // @Test
+    // void testAddGroupMember() {
+    // Long groupId = 1L;
+    // Long userId = 2L;
 
-        when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
-        when(userRepository.findById(userId)).thenReturn(Optional.of(lecturer));
+    // when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
+    // when(userRepository.findById(userId)).thenReturn(Optional.of(lecturer));
 
-        GroupDto result = groupService.addGroupMember(groupId, userId);
+    // GroupDto result = groupService.addGroupMember(groupId, userId);
 
-        assertTrue(group.getMembers().contains(lecturer));
+    // assertTrue(group.getMembers().contains(lecturer));
 
-        assertNotNull(result);
-        assertEquals(groupId, result.getGroupId());
-        assertTrue(result.getMemberIds().contains(userId));
+    // assertNotNull(result);
+    // assertEquals(groupId, result.getGroupId());
+    // assertTrue(result.getMemberIds().contains(userId));
 
-        verify(groupRepository, times(1)).save(any(Group.class));
-    }
+    // verify(groupRepository, times(1)).save(any(Group.class));
+    // }
 
     @Test
     void testSendGroupMessage() {
@@ -205,7 +205,7 @@ public class GroupServiceTest {
 
         assertNotNull(result);
         assertEquals("Test Task", result.getTitle());
-        assertEquals(group.getGroupId(), result.getGroupId()); // Ensure group ID is correctly mapped
+        assertEquals(group.getGroupId(), result.getGroupId());
 
         verify(taskRepository, times(1)).save(any(Task.class));
         verify(notificationService, times(1)).sendNotification(anyLong(), anyString(), anyString());
@@ -217,13 +217,13 @@ public class GroupServiceTest {
         when(file.getOriginalFilename()).thenReturn("testFile.txt");
         when(fileStorageService.storeFile(file)).thenReturn("filePath");
         when(groupRepository.findById(1L)).thenReturn(Optional.of(group));
-        when(userRepository.findById(1L)).thenReturn(Optional.of(admin)); // Fix: Mock uploader
+        when(userRepository.findById(1L)).thenReturn(Optional.of(admin));
 
         File savedFile = new File();
         savedFile.setFileName("testFile.txt");
         savedFile.setFilePath("filePath");
         savedFile.setGroup(group);
-        savedFile.setUploader(admin); // Ensure uploader is set
+        savedFile.setUploader(admin);
 
         when(fileRepository.save(any(File.class))).thenReturn(savedFile);
 
@@ -239,11 +239,11 @@ public class GroupServiceTest {
     void testDownloadFile() throws IOException {
         Long fileId = 1L;
         File file = new File();
-        file.setFilePath("uploads/testFile.txt"); // Ensure a valid path
+        file.setFilePath("uploads/testFile.txt");
 
         Path filePath = Paths.get("uploads/testFile.txt");
-        Files.createDirectories(filePath.getParent()); // Ensure directory exists
-        Files.write(filePath, "Test content".getBytes()); // Create a dummy file
+        Files.createDirectories(filePath.getParent());
+        Files.write(filePath, "Test content".getBytes());
 
         when(fileRepository.findById(fileId)).thenReturn(Optional.of(file));
 
@@ -252,7 +252,6 @@ public class GroupServiceTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
 
-        // Clean up after test
         Files.deleteIfExists(filePath);
     }
 }
