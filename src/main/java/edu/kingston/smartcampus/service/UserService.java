@@ -189,6 +189,14 @@ public class UserService implements org.springframework.security.core.userdetail
         return adminDto;
     }
 
+    public UserDto getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        UserDto dto = new UserDto();
+        mapToUserDto(user, dto);
+        return dto;
+    }
+
     public UserDto getUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));

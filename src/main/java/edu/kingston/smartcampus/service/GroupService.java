@@ -6,6 +6,7 @@ import edu.kingston.smartcampus.model.user.User;
 import edu.kingston.smartcampus.repository.*;
 import io.jsonwebtoken.io.IOException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -30,6 +31,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GroupService {
 
     private final GroupRepository groupRepository;
@@ -43,10 +45,14 @@ public class GroupService {
     private final FileStorageService fileStorageService;
 
 
+    @Transactional
     public GroupDto createGroup(GroupCreateDto dto, Long creatorId) {
         // Verify role from User object
         User creator = userRepository.findById(creatorId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        log.info("Creator: {}", creator);
+        log.info("Creator email: {}", creator.getEmail());
         String roleName = creator.getRole().getRoleName().name();
         log.info("Role name: {}", roleName);
         if (!"ROLE_ADMIN".equals(roleName) && !"ROLE_LECTURER".equals(roleName)) {
@@ -99,7 +105,8 @@ public class GroupService {
         message.setSender(sender);
         message.setGroup(group);
         message.setContent(dto.getContent());
-        message.setSentTime(LocalDateTime.now());
+//        message.setSentTime(LocalDateTime.now()); TODO: Error - LocalDateTime.now() is not serializable
+//!        com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Java 8 date/time type `java.time.LocalDateTime` not supported by default
         Message savedMessage = messageRepository.save(message);
 
         MessageDto messageDto = mapToMessageDto(savedMessage);
@@ -111,6 +118,7 @@ public class GroupService {
                         "New message in " + group.getGroupName() + ": " + dto.getContent(), "MESSAGE");
             }
         });
+        messageDto.setSenderName(sender.getFirstName() + " " + sender.getLastName());
         return messageDto;
     }
 
@@ -202,6 +210,13 @@ public class GroupService {
         }
     }
 
+    @Transactional
+    public GroupDto getGroupById(Long id) {
+        return groupRepository.findById(id)
+                .map(this::mapToGroupDto)
+                .orElseThrow(() -> new IllegalArgumentException("Group not found"));
+    }
+
     // Placeholder mapping methods to convert entities to DTOs
     private GroupDto mapToGroupDto(Group group) {
         GroupDto groupDto = new GroupDto();
@@ -210,11 +225,25 @@ public class GroupService {
         groupDto.setCreatorId(group.getCreator().getId());
         groupDto.setDescription(group.getDescription());
         groupDto.setCreationDate(group.getCreationDate());
-        groupDto.setMemberIds(group.getMembers().stream().map(User::getId).toList());
+        List<UserDto> members = group.getMembers().stream().map(this::mapToUserDto).toList();
+        groupDto.setMembers(members);
         groupDto.setMessages(group.getMessages().stream().map(this::mapToMessageDto).toList());
         groupDto.setTasks(group.getTasks().stream().map(this::mapToTaskDto).toList());
         groupDto.setFiles(group.getFiles().stream().map(this::mapToFileDto).toList());
         return groupDto;
+    }
+
+    private UserDto mapToUserDto(User user) {
+        UserDto userDto = new UserDto();
+        userDto.setUserId(user.getId());
+        userDto.setFirstName(user.getFirstName());
+        userDto.setLastName(user.getLastName());
+        userDto.setEmail(user.getEmail());
+        userDto.setPhone(user.getPhone());
+        userDto.setAddress(user.getAddress());
+        userDto.setProfileImage(user.getProfileImage());
+        userDto.setRoleName(user.getRole().getRoleName().name());
+        return userDto;
     }
 
     private MessageDto mapToMessageDto(Message message) {
@@ -250,8 +279,32 @@ public class GroupService {
         return fileDto;
     }
 
+    @Transactional
     public List<GroupDto> getAllGroups() {
         List<Group> groups = groupRepository.findAll();
         return groups.stream().map(this::mapToGroupDto).toList();
+    }
+
+    @Transactional
+    public void deleteTask(Long taskId) {
+        log.info("Deleting task with ID: {}", taskId);
+        taskRepository.deleteById(taskId);
+    }
+
+    @Transactional
+    public ResponseEntity<List<UserDto>> getGroupMembers(Long groupId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("Group not found"));
+
+        List<UserDto> members = group.getMembers().stream().map(this::mapToUserDto).toList();
+        return ResponseEntity.ok(members);
+    }
+
+    @Transactional
+    public ResponseEntity<List<TaskDto>> getGroupTasks(Long groupId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("Group not found"));
+        List<TaskDto> tasks = group.getTasks().stream().map(this::mapToTaskDto).toList();
+        return ResponseEntity.ok(tasks);
     }
 }

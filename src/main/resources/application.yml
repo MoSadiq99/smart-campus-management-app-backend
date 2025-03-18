@@ -10,6 +10,9 @@ logging:
     org.springframework.security: DEBUG
     org.springframework.web.socket: DEBUG
     org.springframework.messaging: TRACE
+    org.springframework.web: DEBUG
+    org.springdoc: DEBUG
+    org.springframework.web.servlet.resource: DEBUG
 
 springdoc:
   default-produces-media-type: application/json

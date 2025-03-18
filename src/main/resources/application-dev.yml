@@ -24,3 +24,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    open-in-view: true
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+

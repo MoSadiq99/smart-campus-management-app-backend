@@ -1,10 +1,8 @@
 package edu.kingston.smartcampus.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.stereotype.Service;
 import edu.kingston.smartcampus.dto.CourseCreateDto;
 import edu.kingston.smartcampus.dto.CourseDto;
+import edu.kingston.smartcampus.dto.StudentDto;
 import edu.kingston.smartcampus.model.Course;
 import edu.kingston.smartcampus.model.Subject;
 import edu.kingston.smartcampus.model.user.Student;
@@ -12,15 +10,22 @@ import edu.kingston.smartcampus.repository.CourseRepository;
 import edu.kingston.smartcampus.repository.LecturerRepository;
 import edu.kingston.smartcampus.repository.StudentRepository;
 import edu.kingston.smartcampus.repository.SubjectRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CourseService {
     private final LecturerRepository lecturerRepository;
     private final CourseRepository courseRepository;
     private final StudentRepository studentRepository;
     private final SubjectRepository subjectRepository;
+    private final StudentService studentService;
 
     public CourseDto createCourse(CourseCreateDto dto) {
         Course course = new Course();
@@ -37,7 +42,7 @@ public class CourseService {
         CourseDto courseDto = new CourseDto();
         mapToCourseDto(savedCourse, courseDto);
         return courseDto;
-    };
+    }
 
     public List<CourseDto> getCourses() {
         List<Course> courses = courseRepository.findAll();
@@ -58,6 +63,7 @@ public class CourseService {
         return courseDto;
     }
 
+    @Transactional
     public List<Long> getEnrolledStudents(Long courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("Course not found"));
@@ -65,6 +71,12 @@ public class CourseService {
                 .map(Student::getId)
                 .collect(Collectors.toList());
         return studentIds;
+    }
+
+    public List<StudentDto> getEnrolledStudentsList(Long courseId) {
+//        Course course = courseRepository.findById(courseId)
+//                .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+        return studentService.getEnrolledStudentsByCourse(courseId);
     }
 
     public void enrollStudents(Long courseId, List<Long> studentIds) {

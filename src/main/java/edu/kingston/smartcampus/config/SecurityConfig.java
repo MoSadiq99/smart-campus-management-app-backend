@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/ws",
+                                "/ws/**",  // Change from "/ws" to "/ws/**" to cover subpaths like "/ws/info"
                                 "/api/**", //! for testing
                                 "/api/auth/**",
                                 "/v2/api-docs",
@@ -46,7 +46,7 @@ public class SecurityConfig {
                                 "/configuration/ui",
                                 "/configuration/security",
                                 "/swagger-ui.html",
-                                "swagger-ui/index.html",
+                                "/swagger-ui/index.html",
                                 "/swagger-ui/**",
                                 "/webjars/**"
                         ).permitAll()

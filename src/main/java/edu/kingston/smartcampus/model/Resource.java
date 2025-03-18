@@ -28,7 +28,4 @@ public class Resource {
 
     @OneToMany(mappedBy = "resource", cascade = CascadeType.ALL)
     private List<Reservation> reservations;
-
-    @ManyToMany(mappedBy = "resources")
-    private List<Lecture> lectures;
 }

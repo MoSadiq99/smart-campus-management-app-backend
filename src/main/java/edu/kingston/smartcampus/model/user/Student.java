@@ -16,7 +16,7 @@ public class Student extends User {
     private String studentIdNumber; // Unique student ID (e.g., "K1234567")
     private String major; // e.g., "Computer Science"
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "student_courses", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
     private List<Course> enrolledCourses; // Courses this student is enrolled in
 }

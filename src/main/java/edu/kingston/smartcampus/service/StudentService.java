@@ -1,15 +1,14 @@
 package edu.kingston.smartcampus.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-
 import edu.kingston.smartcampus.dto.StudentDto;
 import edu.kingston.smartcampus.model.Course;
 import edu.kingston.smartcampus.model.user.Student;
 import edu.kingston.smartcampus.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,5 +38,15 @@ public class StudentService {
                 .map(Course::getCourseId)
                 .collect(Collectors.toList()));
         return dto;
+    }
+
+    public List<StudentDto> getEnrolledStudentsByCourse(Long courseId) {
+        List<Student> students = studentRepository.findAll();
+        List<StudentDto> enrollStudentDtos = students.stream()
+                .filter(student -> student.getEnrolledCourses().stream()
+                        .anyMatch(course -> course.getCourseId().equals(courseId)))
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+        return enrollStudentDtos;
     }
 }
