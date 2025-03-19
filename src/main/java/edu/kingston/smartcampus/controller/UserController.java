@@ -33,13 +33,11 @@ public class UserController {
         return ResponseEntity.ok(new AuthResponseDto(token, userDto));
     }
 
-
     @PostMapping("/api/authenticate")
     public ResponseEntity<AuthResponseDto> authenticate(@RequestBody AuthRequestDto dto) {
         // Authenticate user
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
-        );
+                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword()));
 
         // Load UserDetails and User entity
         UserDetails userDetails = userDetailsService.loadUserByUsername(dto.getEmail());
@@ -58,6 +56,12 @@ public class UserController {
             @PathVariable Long id, @Valid @RequestBody LecturerProfileDto dto) {
         LecturerDto lecturerDto = userService.setLecturerProfile(id, dto);
         return ResponseEntity.ok(lecturerDto);
+    }
+
+    @PutMapping("/api/users/{id}")
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserDto dto) {
+        UserDto userDto = userService.updateUser(id, dto);
+        return ResponseEntity.ok(userDto);
     }
 
     @GetMapping("/api/users/{id}")
@@ -81,7 +85,7 @@ public class UserController {
         return ResponseEntity.ok(adminDto);
     }
 
-    //* Notification *//
+    // * Notification *//
 
     @PostMapping("/api/notifications")
     public ResponseEntity<NotificationDto> sendNotification(@Valid @RequestBody NotificationCreateDto dto) {

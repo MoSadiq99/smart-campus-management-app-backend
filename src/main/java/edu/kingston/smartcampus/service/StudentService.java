@@ -2,6 +2,7 @@ package edu.kingston.smartcampus.service;
 
 import edu.kingston.smartcampus.dto.StudentDto;
 import edu.kingston.smartcampus.model.Course;
+import edu.kingston.smartcampus.model.enums.UserStatus;
 import edu.kingston.smartcampus.model.user.Student;
 import edu.kingston.smartcampus.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,26 @@ public class StudentService {
         return studentDtos;
     }
 
+    public StudentDto getStudentById(Long id) {
+        Student student = studentRepository.findById(id).orElseThrow();
+        return mapToDto(student);
+    }
+
+    public StudentDto updateStudent(Long id, StudentDto dto) {
+        Student student = studentRepository.findById(id).orElseThrow();
+        student.setFirstName(dto.getFirstName());
+        student.setLastName(dto.getLastName());
+        student.setEmail(dto.getEmail());
+        student.setPhone(dto.getPhone());
+        student.setAddress(dto.getAddress());
+        student.setProfileImage(dto.getProfileImage());
+        student.setStudentIdNumber(dto.getStudentIdNumber());
+        student.setMajor(dto.getMajor());
+        student.setStatus(UserStatus.valueOf(dto.getStatus()));
+        studentRepository.save(student);
+        return mapToDto(student);
+    }
+
     private StudentDto mapToDto(Student student) {
         StudentDto dto = new StudentDto();
         dto.setUserId(student.getId());
@@ -31,6 +52,8 @@ public class StudentService {
         dto.setEmail(student.getEmail());
         dto.setPhone(student.getPhone());
         dto.setAddress(student.getAddress());
+        dto.setRoleName(student.getRole().getRoleName().name());
+        dto.setStatus(student.getStatus().name());
         dto.setProfileImage(student.getProfileImage());
         dto.setStudentIdNumber(student.getStudentIdNumber());
         dto.setMajor(student.getMajor());

@@ -28,14 +28,15 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationProvider authenticationProvider) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationProvider authenticationProvider)
+            throws Exception {
         http
                 .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/ws/**",  // Change from "/ws" to "/ws/**" to cover subpaths like "/ws/info"
-                                "/api/**", //! for testing
+                                "/ws/**", // Change from "/ws" to "/ws/**" to cover subpaths like "/ws/info"
+                                "/api/**", // ! for testing
                                 "/api/auth/**",
                                 "/v2/api-docs",
                                 "/v3/api-docs",
@@ -48,11 +49,11 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-ui/index.html",
                                 "/swagger-ui/**",
-                                "/webjars/**"
-                        ).permitAll()
+                                "/webjars/**",
+                                "/images/**")
+                        .permitAll()
                         .requestMatchers("/api/groups/**").authenticated() // Require auth for file downloads
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

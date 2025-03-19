@@ -74,7 +74,6 @@ public class UserService implements org.springframework.security.core.userdetail
         return dto;
     }
 
-
     public UserDto registerUser(@Valid UserRegisterDto dto) {
         User user;
         switch (dto.getUserType().toUpperCase()) {
@@ -107,7 +106,9 @@ public class UserService implements org.springframework.security.core.userdetail
         user.setPhone(dto.getPhone());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setAddress(dto.getAddress());
-//        user.setProfileImage(dto.getProfileImage());
+        user.setProfileImage(
+                dto.getProfileImage() != null && !dto.getProfileImage().isEmpty() ? dto.getProfileImage()
+                        : "default-avatar.png");
         user.setStatus(UserStatus.PENDING);
         user.setRegistrationDate(LocalDateTime.now());
         user.setAccountLocked(false);
@@ -140,6 +141,23 @@ public class UserService implements org.springframework.security.core.userdetail
         LecturerDto lecturerDto = new LecturerDto();
         mapToLecturerDto((Lecturer) savedLecturer, lecturerDto);
         return lecturerDto;
+    }
+
+    public UserDto updateUser(Long id, UserDto dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
+        user.setAddress(dto.getAddress());
+        user.setProfileImage(dto.getProfileImage());
+
+        User savedUser = userRepository.save(user);
+        UserDto userDto = new UserDto();
+        mapToUserDto(savedUser, userDto);
+        return userDto;
     }
 
     @Transactional
@@ -229,12 +247,13 @@ public class UserService implements org.springframework.security.core.userdetail
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setEmail(user.getEmail());
-//        dto.setPhone(user.getPhone());
-//        dto.setAddress(user.getAddress());
-//        dto.setProfileImage(user.getProfileImage());
+        dto.setPhone(user.getPhone());
+        dto.setAddress(user.getAddress());
+        dto.setProfileImage(user.getProfileImage());
         dto.setStatus(user.getStatus().name());
         dto.setRoleName(user.getRole().getRoleName().name());
-//        dto.setUserType(user instanceof Lecturer ? "LECTURER" : user instanceof Student ? "STUDENT" : user instanceof Admin ? "ADMIN" : "PENDING");
+        // dto.setUserType(user instanceof Lecturer ? "LECTURER" : user instanceof
+        // Student ? "STUDENT" : user instanceof Admin ? "ADMIN" : "PENDING");
     }
 
     private void mapToLecturerDto(Lecturer lecturer, LecturerDto dto) {
@@ -247,7 +266,8 @@ public class UserService implements org.springframework.security.core.userdetail
         mapToUserDto(student, dto);
         dto.setStudentIdNumber(student.getStudentIdNumber());
         dto.setMajor(student.getMajor());
-        dto.setEnrolledCourseIds(student.getEnrolledCourses().stream().map(Course::getCourseId).collect(Collectors.toList()));
+        dto.setEnrolledCourseIds(
+                student.getEnrolledCourses().stream().map(Course::getCourseId).collect(Collectors.toList()));
     }
 
     private void mapToAdminDto(Admin admin, AdminDto dto) {
