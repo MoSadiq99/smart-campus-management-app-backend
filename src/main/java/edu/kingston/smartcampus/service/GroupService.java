@@ -92,7 +92,13 @@ public class GroupService {
     }
 
     public GroupDto addGroupMember(Long groupId, Long userId) {
-        return null;
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("Group not found"));
+        User member = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        group.getMembers().add(member);
+        groupRepository.save(group);
+        return respondGroup(group);
     }
 
     public MessageDto sendGroupMessage(MessageCreateDto dto) {
@@ -105,8 +111,7 @@ public class GroupService {
         message.setSender(sender);
         message.setGroup(group);
         message.setContent(dto.getContent());
-//        message.setSentTime(LocalDateTime.now()); TODO: Error - LocalDateTime.now() is not serializable
-//!        com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Java 8 date/time type `java.time.LocalDateTime` not supported by default
+        message.setSentTime(LocalDateTime.now());  // Error fixed
         Message savedMessage = messageRepository.save(message);
 
         MessageDto messageDto = mapToMessageDto(savedMessage);
@@ -122,6 +127,7 @@ public class GroupService {
         return messageDto;
     }
 
+    @Transactional
     public TaskDto createGroupTask(Long groupId, TaskCreateDto dto) {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("Group not found"));
@@ -150,6 +156,7 @@ public class GroupService {
         return mapToTaskDto(savedTask);
     }
 
+    @Transactional
     public FileDto uploadGroupFile(Long groupId, MultipartFile file, Long uploaderId) {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("Group not found"));
@@ -178,6 +185,7 @@ public class GroupService {
         return mapToFileDto(savedFile);
     }
 
+    @Transactional
     public List<FileDto> getFilesByGroupId(Long groupId) {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("Group not found"));
@@ -250,6 +258,7 @@ public class GroupService {
         MessageDto messageDto = new MessageDto();
         messageDto.setMessageId(message.getMessageId());
         messageDto.setSenderId(message.getSender().getId());
+        messageDto.setSenderName(message.getSender().getName());
         messageDto.setGroupId(message.getGroup().getGroupId());
         messageDto.setContent(message.getContent());
         messageDto.setSentTime(message.getSentTime());

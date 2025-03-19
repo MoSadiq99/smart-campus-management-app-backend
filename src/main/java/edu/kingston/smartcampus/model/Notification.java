@@ -14,7 +14,8 @@ import java.time.LocalDateTime;
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long notificationId;
+    @Column(name = "notification_id")
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -23,12 +24,14 @@ public class Notification {
 
     @Column(nullable = false)
     private String message;
-    private String type; // e.g., "Email", "SMS"
+
+    private String type;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime sentTime;
-    private String status;
 
     @Column(name = "`read`", nullable = false, columnDefinition = "TINYINT(1) NOT NULL DEFAULT 0")
     private boolean read = false;
+
+    private String status;
 }

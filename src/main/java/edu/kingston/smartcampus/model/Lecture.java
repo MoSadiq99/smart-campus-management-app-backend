@@ -1,7 +1,7 @@
 package edu.kingston.smartcampus.model;
 
 import edu.kingston.smartcampus.dto.RecurrencePattern;
-import edu.kingston.smartcampus.model.user.Lecturer;
+import edu.kingston.smartcampus.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -29,7 +29,7 @@ public class Lecture {
 
     @ManyToOne
     @JoinColumn(name = "lecturer_id", nullable = true)
-    private Lecturer lecturer;
+    private User lecturer;
 
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = true)

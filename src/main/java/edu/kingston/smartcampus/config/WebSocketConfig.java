@@ -31,55 +31,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         config.setApplicationDestinationPrefixes("/app");
     }
 
-//    @Override
-//    public void registerStompEndpoints(StompEndpointRegistry registry) {
-//        registry.addEndpoint("/ws")
-//                .setAllowedOrigins("http://localhost:4200")
-//                .addInterceptors(new HttpSessionHandshakeInterceptor() {
-//                    @Override
-//                    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
-//                                                   WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-//                        // Allow SockJS handshake requests (e.g., /ws/info) without strict token check
-//                        String path = request.getURI().getPath();
-//                        if (path.contains("/ws/info") || path.contains("/xhr") || path.contains("/jsonp")) {
-//                            return true; // Permit SockJS handshake requests
-//                        }
-//
-//                        // Check Authorization header for WebSocket/STOMP connection
-//                        String authHeader = request.getHeaders().getFirst("Authorization");
-//                        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-//                            String token = authHeader.substring(7);
-//                            attributes.put("token", token);
-//                            return true; // Allow handshake with valid token
-//                        }
-//                        return false; // Reject if no valid token for non-SockJS paths
-//                    }
-//                })
-//                .withSockJS();
-//    }
-
-//    @Override
-//    public void configureClientInboundChannel(ChannelRegistration registration) {
-//        registration.interceptors(new ChannelInterceptor() {
-//            @Override
-//            public Message<?> preSend(Message<?> message, MessageChannel channel) {
-//                StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-//                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-//                    String authHeader = accessor.getFirstNativeHeader("Authorization");
-//                    if (authHeader != null && authHeader.startsWith("Bearer ")) {
-//                        String token = authHeader.substring(7);
-//                        // Validate token here (e.g., using JwtFilter or a custom service)
-//                        // For now, just log it
-//                        System.out.println("STOMP CONNECT token: " + token);
-//                        return message; // Allow connection
-//                    }
-//                    throw new SecurityException("Invalid or missing token");
-//                }
-//                return message;
-//            }
-//        });
-//    }
-
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry

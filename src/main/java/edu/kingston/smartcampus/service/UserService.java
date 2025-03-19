@@ -2,7 +2,6 @@ package edu.kingston.smartcampus.service;
 
 import edu.kingston.smartcampus.dto.*;
 import edu.kingston.smartcampus.model.Course;
-import edu.kingston.smartcampus.model.Notification;
 import edu.kingston.smartcampus.model.enums.RoleName;
 import edu.kingston.smartcampus.model.enums.UserStatus;
 import edu.kingston.smartcampus.model.user.*;
@@ -19,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,47 +30,48 @@ public class UserService implements org.springframework.security.core.userdetail
     private final NotificationRepository notificationRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
-    public NotificationDto sendNotification(NotificationCreateDto dto) {
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        Notification notification = new Notification();
-        notification.setUser(user);
-        notification.setMessage(dto.getMessage());
-        notification.setType(dto.getType());
-        notification.setSentTime(dto.getSentTime() != null ? dto.getSentTime() : LocalDateTime.now());
-        notification.setStatus("SENT");
-        notification.setRead(false);
-
-        Notification savedNotification = notificationRepository.save(notification);
-
-        // Send via WebSocket to the user's specific topic
-        NotificationDto notificationDto = mapToNotificationDto(savedNotification);
-        messagingTemplate.convertAndSend("/topic/notifications/" + dto.getUserId(), notificationDto);
-
-        return notificationDto;
-    }
-
-    public List<NotificationDto> getUserNotifications(Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        List<Notification> notifications = notificationRepository.findByUserId(userId);
-        return notifications.stream()
-                .map(this::mapToNotificationDto)
-                .collect(Collectors.toList());
-    }
-
-    private NotificationDto mapToNotificationDto(Notification notification) {
-        NotificationDto dto = new NotificationDto();
-        dto.setNotificationId(notification.getNotificationId());
-        dto.setUserId(notification.getUser().getId());
-        dto.setMessage(notification.getMessage());
-        dto.setType(notification.getType());
-        dto.setSentTime(notification.getSentTime());
-        dto.setStatus(notification.getStatus());
-        dto.setRead(notification.isRead());
-        return dto;
-    }
+//
+//    public NotificationDto sendNotification(NotificationCreateDto dto) {
+//        User user = userRepository.findById(dto.getUserId())
+//                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+//
+//        Notification notification = new Notification();
+//        notification.setUser(user);
+//        notification.setMessage(dto.getMessage());
+//        notification.setType(dto.getType());
+//        notification.setSentTime(dto.getSentTime() != null ? dto.getSentTime() : LocalDateTime.now());
+//        notification.setStatus("SENT");
+//        notification.setRead(false);
+//
+//        Notification savedNotification = notificationRepository.save(notification);
+//
+//        // Send via WebSocket to the user's specific topic
+//        NotificationDto notificationDto = mapToNotificationDto(savedNotification);
+//        messagingTemplate.convertAndSend("/topic/notifications/" + dto.getUserId(), notificationDto);
+//
+//        return notificationDto;
+//    }
+//
+//    public List<NotificationDto> getUserNotifications(Long userId) {
+//        userRepository.findById(userId)
+//                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+//        List<Notification> notifications = notificationRepository.findByUserId(userId);
+//        return notifications.stream()
+//                .map(this::mapToNotificationDto)
+//                .collect(Collectors.toList());
+//    }
+//
+//    private NotificationDto mapToNotificationDto(Notification notification) {
+//        NotificationDto dto = new NotificationDto();
+//        dto.setNotificationId(notification.getNotificationId());
+//        dto.setUserId(notification.getUser().getId());
+//        dto.setMessage(notification.getMessage());
+//        dto.setType(notification.getType());
+//        dto.setSentTime(notification.getSentTime());
+//        dto.setStatus(notification.getStatus());
+//        dto.setRead(notification.isRead());
+//        return dto;
+//    }
 
     public UserDto registerUser(@Valid UserRegisterDto dto) {
         User user;
