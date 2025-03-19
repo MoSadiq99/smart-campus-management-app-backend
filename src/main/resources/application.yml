@@ -18,9 +18,9 @@ springdoc:
   default-produces-media-type: application/json
   api-docs:
     enabled: true
-    path: /api-docs
+  #    path: /api-docs  # default path: v3/api-docs
   swagger-ui:
     enabled: true
-    path: /swagger-ui
+#    path: /swagger-ui
 
 
