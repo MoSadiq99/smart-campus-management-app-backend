@@ -28,7 +28,7 @@ public class UserRegisterDto {
     @NotNull(message = "Address is required")
     private String address;
 
-//    private String profileImage;
+    private String profileImage;
 
     @NotBlank(message = "User type is required")
     private String userType;

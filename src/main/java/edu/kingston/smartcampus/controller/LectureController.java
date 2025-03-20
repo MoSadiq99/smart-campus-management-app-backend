@@ -16,6 +16,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 @Slf4j
 @RestController
 @RequestMapping("/api")
@@ -58,7 +66,7 @@ public class LectureController {
         return ResponseEntity.ok(reservationDto);
     }
 
-    @PutMapping("lectures/{lectureId}")
+    @PutMapping("/lectures/{lectureId}")
     public ResponseEntity<LectureDto> updateLecture(@PathVariable Long lectureId, @RequestBody LectureDto dto) {
         LectureDto lectureDto = lectureService.updateLecture(lectureId, dto);
         return ResponseEntity.ok(lectureDto);
